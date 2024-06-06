@@ -27,10 +27,10 @@ jobs:
         pipenv install --dev
     - name: Run Formatter
       run: |
-        black . --check
+        pipenv run black . --check
     - name: Run Linter
       run: |
-        flake8
+        pipenv run flake8
     - name: Run Tests
       run: |
         pipenv run pytest
