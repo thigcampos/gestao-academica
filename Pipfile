@@ -4,8 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+django = "*"
 
 [dev-packages]
+flake8 = "*"
+black = "*"
+pytest = "*"
+pytest-django = "*"
+model-bakery = "*"
+coverage = "*"
+django-model2puml = "*"
 
 [requires]
 python_version = "3.12"
