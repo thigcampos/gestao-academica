@@ -4,11 +4,11 @@
 ### 0. Clone this repo
 Before cloning, make sure you add your public SSH key in github.
 ```
-$ git clone git@github.com:thigcampos/alunos.git
+$ git clone git@github.com:thigcampos/gestao-academica.git
 ```
 And cd into the root folder:
 ```
-cd alunos
+cd gestao-academica
 ```
 
 ### 1. Install packages
