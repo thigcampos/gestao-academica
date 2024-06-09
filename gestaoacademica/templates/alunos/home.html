@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Olá, <b>Thiago</b>{% endblock %}
+
+{% block content %}
+    <section class="status_container">
+        <h4 class="status_title">Status</h4>
+        <p class="status_item-name">Matrícula -> <span class="status_item-value">Pendente</span></p>
+        <p class="status_item-name">Pagamento -> <span class="status_item-value">Pendente</span></p>
+    </section>
+    <menu class="menu">
+        <div class="menu_row">
+            <a href="disciplina/" class="menu_row-item">Matricular-se</a>
+            <a href="alunos/1/cursos" class="menu_row-item">Minhas disciplinas</a>
+        </div>
+        <div class="menu_row">
+            <a href="financeiro/" class="menu_row-item">Pagamento</a>
+            <a href="financeiro/1/comprovantes" class="menu_row-item">Meus comprovantes</a>
+        </div>
+  </menu>
+{% endblock %}

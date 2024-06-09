@@ -18,8 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from gestaoacademica.views import AlunoHomeView, DisciplinaListView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/login", auth_views.LoginView.as_view(), name="accounts_login"),
+    path("", AlunoHomeView.as_view(), name="alunos_home"),
+    path("disciplinas/", DisciplinaListView.as_view(), name="disciplinas_list"),
 ]

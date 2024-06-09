@@ -1,0 +1,113 @@
+:root {
+    --background-primary-default: #0A2019;
+    
+    --fill-primary-default: #103332;
+    --fill-primary-hover: #10333275;
+    --fill-primary-disabled: #10333250;
+
+    --label-primary-default: #FFFFFF;
+    --label-accent-default: #FEFBDB;
+    --label-accent-disabled: #7F937F;
+}
+
+body {
+    margin: 5vh 10vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Inter", "sans-serif";
+    color: var(--label-primary-default);
+    background-color: var(--background-primary-default);
+}
+
+h1 {
+    font-weight: 400 !important;
+    letter-spacing: -.125rem;
+    color: var(--label-accent-default);
+}
+
+footer {
+    color: var(--label-accent-disabled);
+}
+
+.status_container {
+    gap: 1rem;
+    width: 40vw;
+    display: flex;
+    padding: 1rem 2rem;
+    border-radius: .75rem;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--fill-primary-disabled);
+}
+
+.status_title {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.status_item-name {
+    margin: 0;
+    color: var(--label-accent-disabled);
+}
+
+.status_item-value {
+    color: var(--label-accent-default);
+}
+
+b {
+    font-weight: 700;
+}
+
+.button, .menu_row-item {
+    width: 100%;
+    border: none;
+    padding: .75rem;
+    transition: .5s;
+    font-size: 1rem;
+    border-radius: .5rem;
+    text-decoration: none;
+    font-family: "Inter", "sans-serif";
+    color: var(--label-accent-default);
+    background-color: var(--fill-primary-default);
+}
+
+.button:hover, .menu_row-item:hover {
+    background-color: var(--fill-primary-hover);
+}
+
+.menu {
+    gap: 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form {
+    width: 25vw;
+}
+
+form > p {
+    gap: .5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+form > * > label {
+    font-family: "Inter", "sans-serif";
+    color: var(--label-accent-disabled);
+}
+
+form > * > input {
+    color: var(--label-primary-default);
+    border-radius: .5rem;
+    padding: .75rem;
+    background-color: var(--fill-primary-disabled);
+}

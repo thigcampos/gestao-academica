@@ -51,6 +51,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "gestaoacademica.urls"
 
+STATIC_URL = "gestaoacademica/static/"
+
+STATICFILES_DIRS = ["gestaoacademica/static/"]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
