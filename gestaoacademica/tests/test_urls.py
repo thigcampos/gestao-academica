@@ -1,8 +1,9 @@
 from http import HTTPStatus
 from django.urls import resolve, reverse
-from django.contrib.auth import models as auth_models, views as auth_views 
+from django.contrib.auth import views as auth_views
 from django.test import TestCase
 
+from authenticator import models as auth_models
 from gestaoacademica.views import AlunoHomeView, DisciplinaListView, ParticipacaoUpdateView
 
 
@@ -23,7 +24,7 @@ class TestRoutesLogin(TestCase):
 class TestRoutesAlunosHome(TestCase):
     def setUp(self):
         self._url = reverse("alunos_home")
-        self.client.force_login(auth_models.User.objects.get_or_create(username='testuser')[0])
+        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
@@ -38,7 +39,7 @@ class TestRoutesAlunosHome(TestCase):
 class TestRoutesDisciplinasList(TestCase):
     def setUp(self):
         self._url = reverse("disciplinas_list")
-        self.client.force_login(auth_models.User.objects.get_or_create(username='testuser')[0])
+        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
@@ -52,8 +53,8 @@ class TestRoutesDisciplinasList(TestCase):
 
 class TestRoutesParticipacaoUpdate(TestCase):
     def setUp(self):
-        self._url = reverse("participacao_update", kwargs={"pk": 1})
-        self.client.force_login(auth_models.User.objects.get_or_create(username='testuser')[0])
+        self._url = reverse("participacao_update", kwargs={"pk": 0})
+        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)

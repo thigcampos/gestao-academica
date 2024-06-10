@@ -1,30 +1,31 @@
-from django.views.generic import TemplateView, ListView, UpdateView
+from django.views.generic import TemplateView, ListView, FormView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from gestaoacademica.models import Aluno, Disciplina, Participacao
+from gestaoacademica.forms import AlunoForm
+
 
 class AlunoHomeView(LoginRequiredMixin, TemplateView):
+    model = Aluno
     login_url = "/accounts/login"
     template_name = "alunos/home.html"
 
 
+class AlunoCreateView(FormView):
+    form_class = AlunoForm
+    template_name = "alunos/create.html"
+
+
 class DisciplinaListView(LoginRequiredMixin, ListView):
     login_url = "/accounts/login"
-    # model = Disciplina
+    model = Disciplina
     template_name = "disciplinas/list.html"
-    # queryset = Disciplina.object.all()
-
-    # Remove that after Disciplina Model is created
-    def get_queryset(self):
-        return []
+    queryset = Disciplina.objects.all()
 
 
 class ParticipacaoUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "/accounts/login"
-    # model = Participacao
+    model = Participacao
     template_name = "disciplinas/list.html"
     success_url = reverse_lazy("alunos_home")
-
-    # Remove that after Participacao Model is created
-    def get_queryset(self):
-        return []
