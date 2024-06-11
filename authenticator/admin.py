@@ -1,3 +1,6 @@
 from django.contrib import admin
+from gestaoacademica.models import Aluno, Disciplina, Participacao, Turma, Professor, OfertaDisciplina
 
-# Register your models here.
+@admin.register(Aluno, Disciplina, Participacao, Turma, Professor, OfertaDisciplina)
+class PersonAdmin(admin.ModelAdmin):
+    pass
