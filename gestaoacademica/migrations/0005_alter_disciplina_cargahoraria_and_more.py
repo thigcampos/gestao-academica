@@ -7,23 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gestaoacademica', '0004_alter_disciplina_horariofim_and_more'),
+        ("gestaoacademica", "0004_alter_disciplina_horariofim_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='disciplina',
-            name='cargaHoraria',
+            model_name="disciplina",
+            name="cargaHoraria",
             field=models.FloatField(default=0.0),
         ),
         migrations.AlterField(
-            model_name='disciplina',
-            name='horarioFim',
+            model_name="disciplina",
+            name="horarioFim",
             field=models.TimeField(default=datetime.time(16, 27, 9, 829596)),
         ),
         migrations.AlterField(
-            model_name='disciplina',
-            name='horarioInicio',
+            model_name="disciplina",
+            name="horarioInicio",
             field=models.TimeField(default=datetime.time(16, 27, 9, 829571)),
         ),
     ]

@@ -9,8 +9,8 @@ class AlunoForm(forms.ModelForm):
         fields = ["nome", "sobrenome", "registroAluno", "dataNascimento"]
 
         widgets = {
-            "nome":  forms.TextInput(attrs={'class': 'form-control'}),
-            "sobrenome": forms.TextInput(attrs={'class': 'form-control'}),
-            "registroAluno": forms.TextInput(attrs={'class': 'form-control'}),
-            "dataNascimento": forms.DateInput(attrs={'class': 'form-control'})
+            "nome": forms.TextInput(attrs={"class": "form-control"}),
+            "sobrenome": forms.TextInput(attrs={"class": "form-control"}),
+            "registroAluno": forms.TextInput(attrs={"class": "form-control"}),
+            "dataNascimento": forms.DateInput(attrs={"class": "form-control"}),
         }

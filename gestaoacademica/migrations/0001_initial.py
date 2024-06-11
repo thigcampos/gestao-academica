@@ -15,59 +15,157 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Disciplina',
+            name="Disciplina",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.TextField(verbose_name='Nome da Disciplina')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.TextField(verbose_name="Nome da Disciplina")),
             ],
         ),
         migrations.CreateModel(
-            name='Professor',
+            name="Professor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Aluno',
+            name="Aluno",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.TextField(verbose_name='Nome do Aluno')),
-                ('sobrenome', models.TextField(verbose_name='Sobrenome do Aluno')),
-                ('registroAluno', models.IntegerField(db_index=True, unique=True, verbose_name='Registro do Aluno')),
-                ('dataNascimento', models.DateTimeField(db_index=True, verbose_name='Data de Nascimento')),
-                ('matriculaStatus', models.BooleanField(default=False, verbose_name='Status da Matrícula')),
-                ('pagamentoStatus', models.BooleanField(default=False, verbose_name='Status do Pagamento')),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('updated_at', models.DateTimeField(auto_now=True, db_index=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.TextField(verbose_name="Nome do Aluno")),
+                ("sobrenome", models.TextField(verbose_name="Sobrenome do Aluno")),
+                (
+                    "registroAluno",
+                    models.IntegerField(
+                        db_index=True, unique=True, verbose_name="Registro do Aluno"
+                    ),
+                ),
+                (
+                    "dataNascimento",
+                    models.DateTimeField(
+                        db_index=True, verbose_name="Data de Nascimento"
+                    ),
+                ),
+                (
+                    "matriculaStatus",
+                    models.BooleanField(
+                        default=False, verbose_name="Status da Matrícula"
+                    ),
+                ),
+                (
+                    "pagamentoStatus",
+                    models.BooleanField(
+                        default=False, verbose_name="Status do Pagamento"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("updated_at", models.DateTimeField(auto_now=True, db_index=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Aluno da Insituição',
+                "verbose_name": "Aluno da Insituição",
             },
         ),
         migrations.CreateModel(
-            name='Participacao',
+            name="Participacao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('aluno', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestaoacademica.aluno')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "aluno",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="gestaoacademica.aluno",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Turma',
+            name="Turma",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.TextField()),
-                ('aluno', models.ManyToManyField(to='gestaoacademica.aluno')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.TextField()),
+                ("aluno", models.ManyToManyField(to="gestaoacademica.aluno")),
             ],
         ),
         migrations.CreateModel(
-            name='OfertaDisciplina',
+            name="OfertaDisciplina",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('disciplina', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestaoacademica.disciplina')),
-                ('Professor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestaoacademica.professor')),
-                ('turma', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestaoacademica.turma')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "disciplina",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="gestaoacademica.disciplina",
+                    ),
+                ),
+                (
+                    "Professor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="gestaoacademica.professor",
+                    ),
+                ),
+                (
+                    "turma",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="gestaoacademica.turma",
+                    ),
+                ),
             ],
         ),
     ]

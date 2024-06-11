@@ -7,11 +7,19 @@ class Aluno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nome = models.TextField(verbose_name="Nome do Aluno")
     sobrenome = models.TextField(verbose_name="Sobrenome do Aluno")
-    registroAluno = models.IntegerField(db_index=True, unique=True, verbose_name="Registro do Aluno")
-    dataNascimento = models.DateTimeField(db_index=True, verbose_name="Data de Nascimento")
+    registroAluno = models.IntegerField(
+        db_index=True, unique=True, verbose_name="Registro do Aluno"
+    )
+    dataNascimento = models.DateTimeField(
+        db_index=True, verbose_name="Data de Nascimento"
+    )
 
-    matriculaStatus = models.BooleanField(default=False, verbose_name="Status da Matrícula")
-    pagamentoStatus = models.BooleanField(default=False, verbose_name="Status do Pagamento")
+    matriculaStatus = models.BooleanField(
+        default=False, verbose_name="Status da Matrícula"
+    )
+    pagamentoStatus = models.BooleanField(
+        default=False, verbose_name="Status do Pagamento"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
@@ -40,7 +48,7 @@ class Disciplina(models.Model):
     diaDaSemana = models.TextField(choices=DIAS_DA_SEMANA)
     horarioInicio = models.TimeField(default=datetime.datetime.now().time())
     horarioFim = models.TimeField(default=datetime.datetime.now().time())
-    dependencia = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    dependencia = models.ForeignKey("self", on_delete=models.SET_NULL, null=True)
 
 
 class Participacao(models.Model):
