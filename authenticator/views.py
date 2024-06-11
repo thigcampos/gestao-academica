@@ -1,8 +1,7 @@
-from django_registration.forms import RegistrationForm
+from django.views.generic import FormView
 
-from authentication.models import User
+from .forms import UserCreationForm
 
 
-class CustomUserForm(RegistrationForm):
-    class Meta(RegistrationForm.Meta):
-        model = User
+class UserCreateView(FormView):
+    form_class = UserCreationForm
