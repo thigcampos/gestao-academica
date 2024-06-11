@@ -15,6 +15,7 @@ class AlunoHomeView(LoginRequiredMixin, TemplateView):
 class AlunoCreateView(FormView):
     form_class = AlunoForm
     template_name = "alunos/create.html"
+    success_url = reverse_lazy("accounts_register")
 
 
 class DisciplinaListView(LoginRequiredMixin, ListView):

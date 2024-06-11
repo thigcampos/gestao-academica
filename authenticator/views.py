@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django_registration.forms import RegistrationForm
 
-# Create your views here.
+from authentication.models import User
+
+
+class CustomUserForm(RegistrationForm):
+    class Meta(RegistrationForm.Meta):
+        model = User
