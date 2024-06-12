@@ -10,7 +10,7 @@
     {% endfor %}
 </ul>
 {% endif %}
-<form name="oferta-disciplina-form" method="post" action="{% url 'participacao_create' %}">
+<form name="oferta-disciplina-form" method="post" class="disciplina-list" action="{% url 'participacao_create' %}">
    {% csrf_token %}
     {% for oferta_disciplina in object_list %}
     <div class="card">
