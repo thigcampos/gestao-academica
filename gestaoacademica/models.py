@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 import datetime
 
-
 class Aluno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nome = models.TextField(verbose_name="Nome do Aluno")
@@ -25,6 +24,9 @@ class Aluno(models.Model):
 class Professor(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nome = models.TextField()
+    sobrenome = models.TextField(verbose_name="Sobrenome do Aluno")
+    def __str__(self):
+        return f"Professor: {self.nome} {self.sobrenome}"
 class Turma(models.Model):
     aluno = models.ManyToManyField(Aluno)
     nome = models.TextField()
