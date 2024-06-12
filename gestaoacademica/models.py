@@ -50,7 +50,9 @@ class Sala(models.Model):
 
 class Disciplina(models.Model):
     nome = models.TextField(verbose_name="Nome da disciplina", default="")
-    dependencia = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
+    dependencia = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True
+    )
     cargaHoraria = models.IntegerField(default=0)
 
     def __str__(self) -> str:

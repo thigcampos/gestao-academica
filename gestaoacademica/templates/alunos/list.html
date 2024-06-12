@@ -10,13 +10,11 @@
     {% endfor %}
 </ul>
 {% endif %}
-<form name="oferta-disciplina-form" method="post" action="{% url 'participacao_create' %}">
-   {% csrf_token %}
+<div>
     {% for oferta_disciplina in object_list %}
     <div class="card">
         <header>
-            <input id="oferta-disciplina={{oferta_disciplina.id}}" type="checkbox" name="oferta-disciplina" value="{{ oferta_disciplina.id }}"/>
-            <label for="oferta-disciplina={{oferta_disciplina.id}}">{{ oferta_disciplina.disciplina.nome }}</label>
+            <h2>{{ oferta_disciplina.disciplina.nome }}</h2>
         </header>
         <ul>
             <li>Professor: {{oferta_disciplina.Professor.nome}} {{oferta_disciplina.Professor.sobrenome}}</li>
@@ -27,6 +25,5 @@
         </ul>
     </div>
     {% endfor %}
-    <button type="submit" class="button">Salvar</button>
-</form>
+</div>
 {% endblock %}

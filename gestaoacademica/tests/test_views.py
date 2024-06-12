@@ -6,8 +6,7 @@ from model_bakery.baker import make
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import (
-        Aluno, OfertaDisciplina, Disciplina, Turma, Professor)
+from gestaoacademica.models import Aluno, OfertaDisciplina, Disciplina, Turma, Professor
 
 
 class TestAlunoCreateView(TestCase):
@@ -53,15 +52,15 @@ class TestParticipacaoCreateView(TestCase):
         self._url = reverse("participacao_create")
         self.user = make(User)
         self.aluno = make(Aluno, user=self.user)
-        self.client.force_login(
-            User.objects.get_or_create(email=self.user.email)[0]
-        )
+        self.client.force_login(User.objects.get_or_create(email=self.user.email)[0])
 
     def test_participacao_create_form_validation_of_capacidade(self):
         turma = make(Turma, aluno=[self.aluno])
         professor = make(Professor)
         disciplina = make(Disciplina, capacidade=1)
-        oferta_disciplina = make(OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor)
+        oferta_disciplina = make(
+            OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor
+        )
         post_data = {"oferta-disciplina": [oferta_disciplina.id]}
 
         response = self.client.post(self._url, data=post_data)
@@ -74,7 +73,9 @@ class TestParticipacaoCreateView(TestCase):
             turma.aluno.add(aluno)
         professor = make(Professor)
         disciplina = make(Disciplina, capacidade=15)
-        oferta_disciplina = make(OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor)
+        oferta_disciplina = make(
+            OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor
+        )
         post_data = {"oferta-disciplina": [oferta_disciplina.id]}
 
         response = self.client.post(self._url, data=post_data)

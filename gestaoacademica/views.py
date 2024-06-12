@@ -2,6 +2,7 @@ from django.views.generic import TemplateView, ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
@@ -56,16 +57,53 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
     fields = ["aluno, ofertaDisciplina"]
     template_name = "disciplinas/list.html"
     success_url = reverse_lazy("alunos_home")
+    failed_url = reverse_lazy("oferta_disciplina_list")
 
     def post(self, request, *args, **kwargs):
-        oferta_ids_list = request.POST.getlist('oferta-disciplina')
+        oferta_ids_list = request.POST.getlist("oferta-disciplina")
         user = User.objects.filter(email=request.user)[0]
-        aluno = Aluno.objects.filter(user=user)[0]        
-        horarios = []
+        aluno = Aluno.objects.filter(user=user)[0]
+        dia_horarios = []
+
+        if len(oferta_ids_list) > 3:
+            messages.error(request, "Créditos excedidos, máximo 3")
+            return HttpResponseRedirect(self.failed_url)
+
         for oferta_id in oferta_ids_list:
-            oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id)[0] 
+            oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id)[0]
+            oferta_dia_horario = f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             print(oferta_disciplina)
-            if oferta_disciplina.sala.capacidade > oferta_disciplina.turma.aluno.count():
-                print("VALID")
+            if oferta_dia_horario not in dia_horarios:
+                dia_horarios.append(oferta_dia_horario)
+
             else:
-                print("ERROR")
+                messages.error(request, "Há conflito de horários")
+                return HttpResponseRedirect(self.failed_url)
+
+            if (
+                oferta_disciplina.sala.capacidade
+                == oferta_disciplina.turma.aluno.count()
+            ):
+                messages.error(request, f"Disciplina { oferta_disciplina.disciplina.nome } com capacidade máxima")
+                return HttpResponseRedirect(self.failed_url)
+
+            participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
+            participacao.save()
+        messages.success(request, "Inscrição feita com sucesso")
+        return HttpResponseRedirect(self.success_url)
+
+
+class AlunoDisciplinaListView(LoginRequiredMixin, ListView):
+    login_url = "/accounts/login"
+    model = OfertaDisciplina
+    template_name = "alunos/list.html"
+    queryset = Participacao.objects.filter()
+
+    def get_queryset(self):
+        user = self.request.user
+        aluno = Aluno.objects.filter(user=user)[0]
+        participacoes = Participacao.objects.filter(aluno=aluno)
+        ofertas_disciplina = []
+        for participacao in participacoes:
+            ofertas_disciplina.append(participacao.ofertaDisciplina)
+        return ofertas_disciplina

@@ -1,0 +1,174 @@
+@startuml 
+class "authenticator.User <Authenticator>" as authenticator.User #d6f4f1 {
+    usuário
+    --
+    + id (BigAutoField)
+    + password (CharField)
+    + last_login (DateTimeField)
+    + is_superuser (BooleanField)
+    + first_name (CharField)
+    + last_name (CharField)
+    + is_staff (BooleanField)
+    + is_active (BooleanField)
+    + date_joined (DateTimeField)
+    + email (EmailField)
+    # groups (ManyToManyField)
+    # user_permissions (ManyToManyField)
+    --
+}
+authenticator.User *--* auth.Group
+authenticator.User *--* auth.Permission
+
+
+class "admin.LogEntry <Administração>" as admin.LogEntry #f4d6f1 {
+    entrada de log
+    --
+    - id (AutoField)
+    + action_time (DateTimeField)
+    ~ user (ForeignKey)
+    ~ content_type (ForeignKey)
+    + object_id (TextField)
+    + object_repr (CharField)
+    + action_flag (PositiveSmallIntegerField)
+    + change_message (TextField)
+    --
+}
+admin.LogEntry -- authenticator.User
+admin.LogEntry -- contenttypes.ContentType
+
+
+class "auth.Permission <Autenticação e Autorização>" as auth.Permission #e8f4d6 {
+    permissão
+    --
+    - id (AutoField)
+    + name (CharField)
+    ~ content_type (ForeignKey)
+    + codename (CharField)
+    --
+}
+auth.Permission -- contenttypes.ContentType
+
+
+class "auth.Group <Autenticação e Autorização>" as auth.Group #e8f4d6 {
+    grupo
+    --
+    - id (AutoField)
+    + name (CharField)
+    # permissions (ManyToManyField)
+    --
+}
+auth.Group *--* auth.Permission
+
+
+class "contenttypes.ContentType <Tipos de Conteúdo>" as contenttypes.ContentType #d6f4de {
+    tipo de conteúdo
+    --
+    - id (AutoField)
+    + app_label (CharField)
+    + model (CharField)
+    --
+}
+
+
+class "sessions.Session <Sessões>" as sessions.Session #f4e1d6 {
+    sessão
+    --
+    + session_key (CharField)
+    + session_data (TextField)
+    + expire_date (DateTimeField)
+    --
+}
+
+
+class "gestaoacademica.Aluno <Gestaoacademica>" as gestaoacademica.Aluno #d6ebf4 {
+    Aluno da Insituição
+    --
+    + id (BigAutoField)
+    ~ user (OneToOneField)
+    + nome (TextField)
+    + sobrenome (TextField)
+    + prontuario (TextField)
+    + created_at (DateTimeField)
+    + updated_at (DateTimeField)
+    --
+}
+gestaoacademica.Aluno -- authenticator.User
+
+
+class "gestaoacademica.Professor <Gestaoacademica>" as gestaoacademica.Professor #d6ebf4 {
+    professor
+    --
+    + id (BigAutoField)
+    ~ user (OneToOneField)
+    + nome (TextField)
+    + sobrenome (TextField)
+    --
+}
+gestaoacademica.Professor -- authenticator.User
+
+
+class "gestaoacademica.Turma <Gestaoacademica>" as gestaoacademica.Turma #d6ebf4 {
+    turma
+    --
+    + id (BigAutoField)
+    + nome (TextField)
+    # aluno (ManyToManyField)
+    --
+}
+gestaoacademica.Turma *--* gestaoacademica.Aluno
+
+
+class "gestaoacademica.Sala <Gestaoacademica>" as gestaoacademica.Sala #d6ebf4 {
+    sala
+    --
+    + id (BigAutoField)
+    + idSala (TextField)
+    + capacidade (IntegerField)
+    --
+}
+
+
+class "gestaoacademica.Disciplina <Gestaoacademica>" as gestaoacademica.Disciplina #d6ebf4 {
+    disciplina
+    --
+    + id (BigAutoField)
+    + nome (TextField)
+    ~ dependencia (ForeignKey)
+    + cargaHoraria (IntegerField)
+    --
+}
+gestaoacademica.Disciplina -- gestaoacademica.Disciplina
+
+
+class "gestaoacademica.OfertaDisciplina <Gestaoacademica>" as gestaoacademica.OfertaDisciplina #d6ebf4 {
+    oferta disciplina
+    --
+    + id (BigAutoField)
+    ~ turma (ForeignKey)
+    ~ professor (ForeignKey)
+    ~ disciplina (ForeignKey)
+    + diaDaSemana (TextField)
+    ~ sala (ForeignKey)
+    + horarioInicio (TimeField)
+    + horarioFim (TimeField)
+    --
+}
+gestaoacademica.OfertaDisciplina -- gestaoacademica.Turma
+gestaoacademica.OfertaDisciplina -- gestaoacademica.Professor
+gestaoacademica.OfertaDisciplina -- gestaoacademica.Disciplina
+gestaoacademica.OfertaDisciplina -- gestaoacademica.Sala
+
+
+class "gestaoacademica.Participacao <Gestaoacademica>" as gestaoacademica.Participacao #d6ebf4 {
+    participacao
+    --
+    + id (BigAutoField)
+    ~ aluno (ForeignKey)
+    ~ ofertaDisciplina (ForeignKey)
+    --
+}
+gestaoacademica.Participacao -- gestaoacademica.Aluno
+gestaoacademica.Participacao -- gestaoacademica.OfertaDisciplina
+
+
+@enduml
