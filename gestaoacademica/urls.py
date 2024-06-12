@@ -22,7 +22,7 @@ from django.urls import path
 from authenticator.views import UserCreateView, LogoutView
 from gestaoacademica.views import (
     AlunoHomeView,
-    DisciplinaListView,
+    OfertaDisciplinaListView,
     ParticipacaoUpdateView,
     AlunoCreateView,
 )
@@ -34,7 +34,7 @@ urlpatterns = [
     path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
     path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
     path("", AlunoHomeView.as_view(), name="alunos_home"),
-    path("disciplinas/", DisciplinaListView.as_view(), name="disciplinas_list"),
+    path("disciplinas/", OfertaDisciplinaListView.as_view(), name="oferta_disciplina_list"),
     path(
         "alunos/<int:pk>/participacao/",
         ParticipacaoUpdateView.as_view(),

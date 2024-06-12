@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, Disciplina, Participacao
+from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao
 from gestaoacademica.forms import AlunoForm
 
 
@@ -43,11 +43,11 @@ class AlunoCreateView(CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class DisciplinaListView(LoginRequiredMixin, ListView):
+class OfertaDisciplinaListView(LoginRequiredMixin, ListView):
     login_url = "/accounts/login"
-    model = Disciplina
+    model = OfertaDisciplina
     template_name = "disciplinas/list.html"
-    queryset = Disciplina.objects.all()
+    queryset = OfertaDisciplina.objects.all()
 
 
 class ParticipacaoUpdateView(LoginRequiredMixin, UpdateView):

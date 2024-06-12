@@ -2,10 +2,11 @@ from django.test import TestCase
 from django.urls import reverse
 
 from http import HTTPStatus
+from model_bakery.baker import make
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno
+from gestaoacademica.models import Aluno, OfertaDisciplina
 
 
 class TestAlunoCreateView(TestCase):
@@ -30,3 +31,17 @@ class TestAlunoCreateView(TestCase):
         assert response.status_code == HTTPStatus.FOUND
         assert User.objects.filter(email=post_data.get("email"))
         assert Aluno.objects.filter(prontuario=post_data.get("prontuario"))
+
+
+class TestOfertaDisciplinaListView(TestCase):
+    def setUp(self):
+        self.url = reverse("oferta_disciplina_list")
+        self.client.force_login(
+            User.objects.get_or_create(email="testuser@mail.com")[0]
+        )
+
+    def test_get_list_of_oferta_disciplina(self):
+        oferta_disciplina = make(OfertaDisciplina)
+        response = self.client.get(self.url)
+        oferta_disciplina_list = response.context["object_list"]
+        assert list(oferta_disciplina_list) == [oferta_disciplina]
