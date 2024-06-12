@@ -69,7 +69,7 @@ class OfertaDisciplina(models.Model):
     horarioFim = models.TimeField(default=datetime.datetime.now().time())
     
     def __str__(self) -> str:
-        return f"{self.disciplina.nome} ({self.professor.nome}) {self.horarioInicio} - {self.horarioFim}"
+        return f"{self.disciplina.nome} ({self.professor.nome}) {self.diaDaSemana} {self.horarioInicio} - {self.horarioFim}"
 
 class Participacao(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
