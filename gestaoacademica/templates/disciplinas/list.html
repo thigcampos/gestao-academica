@@ -3,4 +3,23 @@
 {% block title %}Todas as <b>disciplinas</b>{% endblock %}
 
 {% block content %}
+<form name="oferta-disciplina-form" method="post" action="{% url 'participacao_create' %}">
+   {% csrf_token %}
+    {% for oferta_disciplina in object_list %}
+    <div class="card">
+        <header>
+            <input id="oferta-disciplina={{oferta_disciplina.id}}" type="checkbox" name="oferta-disciplina" value="{{ oferta_disciplina.id }}"/>
+            <label for="oferta-disciplina={{oferta_disciplina.id}}">{{ oferta_disciplina.disciplina.nome }}</label>
+        </header>
+        <ul>
+            <li>Professor: {{oferta_disciplina.Professor.nome}} {{oferta_disciplina.Professor.sobrenome}}</li>
+            <li>Sala: {{oferta_disciplina.sala.id}}</li>
+            <li>Horário: {{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</li>
+            <li>Dia de Aula: {{oferta_disciplina.diaDaSemana}}</li>
+            <li>Inscritos: {{ oferta_disciplina.turma.aluno | length }} de {{ oferta_disciplina.sala.capacidade }}</li>
+        </ul>
+    </div>
+    {% endfor %}
+    <button type="submit" class="button">Salvar</button>
+</form>
 {% endblock %}

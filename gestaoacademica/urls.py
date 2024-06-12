@@ -23,7 +23,7 @@ from authenticator.views import UserCreateView, LogoutView
 from gestaoacademica.views import (
     AlunoHomeView,
     OfertaDisciplinaListView,
-    ParticipacaoUpdateView,
+    ParticipacaoCreateView,
     AlunoCreateView,
 )
 
@@ -40,8 +40,8 @@ urlpatterns = [
         name="oferta_disciplina_list",
     ),
     path(
-        "alunos/<int:pk>/participacao/",
-        ParticipacaoUpdateView.as_view(),
-        name="participacao_update",
+        "participacao/create",
+        ParticipacaoCreateView.as_view(),
+        name="participacao_create",
     ),
 ]

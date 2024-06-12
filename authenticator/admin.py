@@ -6,10 +6,12 @@ from gestaoacademica.models import (
     Turma,
     Professor,
     OfertaDisciplina,
-    Sala
+    Sala,
 )
 
 
-@admin.register(Aluno, Disciplina, Participacao, Turma, Professor, OfertaDisciplina, Sala)
+@admin.register(
+    Aluno, Disciplina, Participacao, Turma, Professor, OfertaDisciplina, Sala
+)
 class PersonAdmin(admin.ModelAdmin):
     pass

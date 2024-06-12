@@ -32,7 +32,7 @@ footer {
     color: var(--label-accent-disabled);
 }
 
-.status_container {
+.status_container, .card {
     gap: 1rem;
     width: 40vw;
     display: flex;
@@ -41,6 +41,20 @@ footer {
     flex-direction: column;
     justify-content: center;
     background-color: var(--fill-primary-disabled);
+}
+
+.card > header {
+    gap: .5rem;
+    display: flex;
+    align-items: center;
+    label {
+        color: var(--label-accent-default);
+        font-size: 1.25rem
+    }
+}
+
+.card > ul {
+    list-style-type: none;
 }
 
 .status_title {

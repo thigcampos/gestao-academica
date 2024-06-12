@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from django.views.generic import TemplateView, ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -50,8 +50,22 @@ class OfertaDisciplinaListView(LoginRequiredMixin, ListView):
     queryset = OfertaDisciplina.objects.all()
 
 
-class ParticipacaoUpdateView(LoginRequiredMixin, UpdateView):
+class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
     login_url = "/accounts/login"
     model = Participacao
+    fields = ["aluno, ofertaDisciplina"]
     template_name = "disciplinas/list.html"
     success_url = reverse_lazy("alunos_home")
+
+    def post(self, request, *args, **kwargs):
+        oferta_ids_list = request.POST.getlist('oferta-disciplina')
+        user = User.objects.filter(email=request.user)[0]
+        aluno = Aluno.objects.filter(user=user)[0]        
+        horarios = []
+        for oferta_id in oferta_ids_list:
+            oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id)[0] 
+            print(oferta_disciplina)
+            if oferta_disciplina.sala.capacidade > oferta_disciplina.turma.aluno.count():
+                print("VALID")
+            else:
+                print("ERROR")
