@@ -62,6 +62,10 @@ footer {
     font-size: 1.5rem;
 }
 
+.menu {
+    width: 40vw;
+}
+
 .status_item-name {
     margin: 0;
     color: var(--label-accent-disabled);

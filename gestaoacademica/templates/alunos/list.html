@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Todas as <b>disciplinas</b>{% endblock %}
+{% block title %}Minhas <b>disciplinas</b>{% endblock %}
 
 {% block content %}
 {% if messages %}
@@ -21,7 +21,6 @@
             <li>Sala: {{oferta_disciplina.sala.id}}</li>
             <li>Horário: {{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</li>
             <li>Dia de Aula: {{oferta_disciplina.diaDaSemana}}</li>
-            <li>Inscritos: {{ oferta_disciplina.turma.aluno | length }} de {{ oferta_disciplina.sala.capacidade }}</li>
         </ul>
     </div>
     {% endfor %}

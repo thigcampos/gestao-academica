@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Olá, <b>{{ Aluno.nome }}</b>{% endblock %}
+{% block title %}Olá, <b>{{ user.email }}</b>{% endblock %}
 
 {% block content %}
 {% if messages %}
@@ -10,19 +10,14 @@
     {% endfor %}
 </ul>
 {% endif %}
-    <section class="status_container">
-        <h4 class="status_title">Status</h4>
-        <p class="status_item-name">Matrícula -> <span class="status_item-value">Pendente</span></p>
-        <p class="status_item-name">Pagamento -> <span class="status_item-value">Pendente</span></p>
-    </section>
     <menu class="menu">
         <div class="menu_row">
             <a href="disciplinas/" class="menu_row-item">Matricular-se</a>
-            <a href="alunos/1/disciplinas" class="menu_row-item">Minhas disciplinas</a>
+            <a href="alunos/disciplina" class="menu_row-item">Minhas disciplinas</a>
         </div>
         <div class="menu_row">
-            <a href="financeiro/" class="menu_row-item">Pagamento</a>
-            <a href="financeiro/1/comprovantes" class="menu_row-item">Meus comprovantes</a>
+            <a href="admin/" disabled class="menu_row-item">Admin</a>
+            <a href="accounts/logout/" disabled class="menu_row-item">Logout</a>
         </div>
   </menu>
 {% endblock %}
