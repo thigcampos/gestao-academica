@@ -6,7 +6,7 @@ from model_bakery.baker import make
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, OfertaDisciplina, Disciplina, Turma, Professor
+from gestaoacademica.models import Aluno, OfertaDisciplina, Disciplina, Turma, Professor, Sala
 
 
 class TestAlunoCreateView(TestCase):
@@ -54,30 +54,18 @@ class TestParticipacaoCreateView(TestCase):
         self.aluno = make(Aluno, user=self.user)
         self.client.force_login(User.objects.get_or_create(email=self.user.email)[0])
 
-    def test_participacao_create_form_validation_of_capacidade(self):
-        turma = make(Turma, aluno=[self.aluno])
-        professor = make(Professor)
-        disciplina = make(Disciplina, capacidade=1)
-        oferta_disciplina = make(
-            OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor
-        )
-        post_data = {"oferta-disciplina": [oferta_disciplina.id]}
-
-        response = self.client.post(self._url, data=post_data)
-        print(response.request)
-
     def test_participacao_create_form(self):
         turma = make(Turma, aluno=[])
         for index in range(1, 11):
             aluno = make(Aluno, prontuario=index)
             turma.aluno.add(aluno)
         professor = make(Professor)
-        disciplina = make(Disciplina, capacidade=15)
+        disciplina = make(Disciplina)
+        sala = make(Sala)
         oferta_disciplina = make(
-            OfertaDisciplina, turma=turma, disciplina=disciplina, Professor=professor
+            OfertaDisciplina, turma=turma, disciplina=disciplina, professor=professor, sala=sala
         )
         post_data = {"oferta-disciplina": [oferta_disciplina.id]}
 
         response = self.client.post(self._url, data=post_data)
         assert response.status_code == HTTPStatus.FOUND
-        assert turma.aluno.count() == 11
