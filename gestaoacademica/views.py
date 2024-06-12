@@ -24,7 +24,6 @@ class AlunoCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["user"] = UserCreationForm
-        print(context)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -34,7 +33,7 @@ class AlunoCreateView(CreateView):
 
         aluno_nome = request.POST.get("nome")
         aluno_sobrenome = request.POST.get("sobrenome")
-        aluno_prontuario = request.POST.get("registroAluno")
+        aluno_prontuario = request.POST.get("prontuario")
         Aluno.objects.create(
             user=user,
             nome=aluno_nome,

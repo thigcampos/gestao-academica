@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 class UserCreationForm(forms.ModelForm):
     """
-    A form that creates a user, with no privileges, from the given emailand
+    A form that creates a user, with no privileges, from the given email and
     password.
     """
 
