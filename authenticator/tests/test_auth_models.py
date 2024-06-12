@@ -24,7 +24,9 @@ class UsersManagersTests(TestCase):
 
     def test_create_superuser(self):
         User = get_user_model()
-        admin_user = User.objects.create_superuser(email="testsuperuser@mail.com", password="foobar")
+        admin_user = User.objects.create_superuser(
+            email="testsuperuser@mail.com", password="foobar"
+        )
 
         assert admin_user.email == "testsuperuser@mail.com"
         assert admin_user.is_active
@@ -36,4 +38,5 @@ class UsersManagersTests(TestCase):
             pass
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                email="testsuperuser@mail.com", password="foobar", is_superuser=False)
+                email="testsuperuser@mail.com", password="foobar", is_superuser=False
+            )

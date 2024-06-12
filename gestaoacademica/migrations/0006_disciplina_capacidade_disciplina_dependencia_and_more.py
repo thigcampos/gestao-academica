@@ -8,28 +8,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gestaoacademica', '0005_alter_disciplina_cargahoraria_and_more'),
+        ("gestaoacademica", "0005_alter_disciplina_cargahoraria_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='disciplina',
-            name='capacidade',
+            model_name="disciplina",
+            name="capacidade",
             field=models.SmallIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='disciplina',
-            name='dependencia',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='gestaoacademica.disciplina'),
+            model_name="disciplina",
+            name="dependencia",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="gestaoacademica.disciplina",
+            ),
         ),
         migrations.AlterField(
-            model_name='disciplina',
-            name='horarioFim',
+            model_name="disciplina",
+            name="horarioFim",
             field=models.TimeField(default=datetime.time(16, 37, 45, 429207)),
         ),
         migrations.AlterField(
-            model_name='disciplina',
-            name='horarioInicio',
+            model_name="disciplina",
+            name="horarioInicio",
             field=models.TimeField(default=datetime.time(16, 37, 45, 429127)),
         ),
     ]

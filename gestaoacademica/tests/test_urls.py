@@ -4,7 +4,11 @@ from django.contrib.auth import views as auth_views
 from django.test import TestCase
 
 from authenticator import models as auth_models
-from gestaoacademica.views import AlunoHomeView, DisciplinaListView, ParticipacaoUpdateView
+from gestaoacademica.views import (
+    AlunoHomeView,
+    AlunoCreateView,
+    OfertaDisciplinaListView,
+)
 
 
 class TestRoutesLogin(TestCase):
@@ -24,7 +28,9 @@ class TestRoutesLogin(TestCase):
 class TestRoutesAlunosHome(TestCase):
     def setUp(self):
         self._url = reverse("alunos_home")
-        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
+        self.client.force_login(
+            auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
+        )
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
@@ -36,29 +42,33 @@ class TestRoutesAlunosHome(TestCase):
         self.assertTemplateUsed(response, "alunos/home.html")
 
 
-class TestRoutesDisciplinasList(TestCase):
+class TestRoutesAlunosCreate(TestCase):
     def setUp(self):
-        self._url = reverse("disciplinas_list")
-        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
+        self._url = reverse("alunos_create")
+        self.client.force_login(
+            auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
+        )
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
-        assert resolved.func.view_class == DisciplinaListView
+        assert resolved.func.view_class == AlunoCreateView
 
     def test_loads_correct_view(self):
         response = self.client.get(self._url)
         assert response.status_code == HTTPStatus.OK
-        self.assertTemplateUsed(response, "disciplinas/list.html")
+        self.assertTemplateUsed(response, "alunos/create.html")
 
 
-class TestRoutesParticipacaoUpdate(TestCase):
+class TestRoutesOfertaDisciplinaList(TestCase):
     def setUp(self):
-        self._url = reverse("participacao_update", kwargs={"pk": 0})
-        self.client.force_login(auth_models.User.objects.get_or_create(email='testuser@mail.com')[0])
+        self._url = reverse("oferta_disciplina_list")
+        self.client.force_login(
+            auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
+        )
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
-        assert resolved.func.view_class == ParticipacaoUpdateView
+        assert resolved.func.view_class == OfertaDisciplinaListView
 
     def test_loads_correct_view(self):
         response = self.client.get(self._url)

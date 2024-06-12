@@ -18,14 +18,30 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from gestaoacademica.views import (AlunoHomeView, DisciplinaListView,
-        ParticipacaoUpdateView, AlunoCreateView)
+
+from authenticator.views import UserCreateView, LogoutView
+from gestaoacademica.views import (
+    AlunoHomeView,
+    OfertaDisciplinaListView,
+    ParticipacaoUpdateView,
+    AlunoCreateView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/login", auth_views.LoginView.as_view(), name="accounts_login"),
-    path("accounts/aluno", AlunoCreateView.as_view(), name="alunos_create"),
+    path("accounts/register/", UserCreateView.as_view(), name="accounts_register"),
+    path("accounts/login/", auth_views.LoginView.as_view(), name="accounts_login"),
+    path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
+    path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
     path("", AlunoHomeView.as_view(), name="alunos_home"),
-    path("disciplinas/", DisciplinaListView.as_view(), name="disciplinas_list"),
-    path("alunos/<int:pk>/participacao/", ParticipacaoUpdateView.as_view(), name="participacao_update"),
+    path(
+        "disciplinas/",
+        OfertaDisciplinaListView.as_view(),
+        name="oferta_disciplina_list",
+    ),
+    path(
+        "alunos/<int:pk>/participacao/",
+        ParticipacaoUpdateView.as_view(),
+        name="participacao_update",
+    ),
 ]
