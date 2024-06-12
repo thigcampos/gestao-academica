@@ -105,5 +105,6 @@ class AlunoDisciplinaListView(LoginRequiredMixin, ListView):
         participacoes = Participacao.objects.filter(aluno=aluno)
         ofertas_disciplina = []
         for participacao in participacoes:
-            ofertas_disciplina.append(participacao.ofertaDisciplina)
+            if participacao.ofertaDisciplina not in ofertas_disciplina:
+                ofertas_disciplina.append(participacao.ofertaDisciplina)
         return ofertas_disciplina
