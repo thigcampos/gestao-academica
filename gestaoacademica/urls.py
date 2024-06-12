@@ -34,7 +34,11 @@ urlpatterns = [
     path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
     path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
     path("", AlunoHomeView.as_view(), name="alunos_home"),
-    path("disciplinas/", OfertaDisciplinaListView.as_view(), name="oferta_disciplina_list"),
+    path(
+        "disciplinas/",
+        OfertaDisciplinaListView.as_view(),
+        name="oferta_disciplina_list",
+    ),
     path(
         "alunos/<int:pk>/participacao/",
         ParticipacaoUpdateView.as_view(),

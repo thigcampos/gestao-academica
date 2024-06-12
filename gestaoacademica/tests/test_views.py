@@ -24,7 +24,7 @@ class TestAlunoCreateView(TestCase):
             "prontuario": "another_string",
             "email": "testuser@mail.com",
             "password1": "foobar",
-            "password2": "foobar"
+            "password2": "foobar",
         }
         response = self.client.post(self._url, data=post_data)
 
