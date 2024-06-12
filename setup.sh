@@ -10,5 +10,10 @@ echo "Professores criados"
 echo "Criando Disciplinas:"
 cat setup/base_disciplina.py | python3 manage.py shell
 echo "Disciplinas criadas"
-
+echo "Criando Salas:"
+cat setup/base_salas.py | python3 manage.py shell
+echo "Salas criadas"
+echo "Criando Ofertas de disciplinas:"
+cat setup/base_oferta_disciplina.py | python3 manage.py shell
+echo "Ofertas de disciplinas criadas"
 
