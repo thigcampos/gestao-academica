@@ -7,28 +7,20 @@ class Aluno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nome = models.TextField(verbose_name="Nome do Aluno")
     sobrenome = models.TextField(verbose_name="Sobrenome do Aluno")
-    registroAluno = models.IntegerField(
-        db_index=True, unique=True, verbose_name="Registro do Aluno"
-    )
-    dataNascimento = models.DateTimeField(
-        db_index=True, verbose_name="Data de Nascimento"
-    )
-
-    matriculaStatus = models.BooleanField(
-        default=False, verbose_name="Status da Matrícula"
-    )
-    pagamentoStatus = models.BooleanField(
-        default=False, verbose_name="Status do Pagamento"
+    prontuario = models.TextField(
+        db_index=True, unique=True, default="AP", verbose_name="Registro do Aluno"
     )
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
+    objects = models.Manager()
+
     class Meta:
         verbose_name = "Aluno da Insituição"
 
     def __str__(self):
-        return f"Aluno: {self.registroAluno}"
+        return f"Aluno: {self.nome} {self.sobrenome}"
 
 
 class Disciplina(models.Model):

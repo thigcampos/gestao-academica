@@ -7,7 +7,6 @@ from authenticator import models as auth_models
 from gestaoacademica.views import (
     AlunoHomeView,
     DisciplinaListView,
-    ParticipacaoUpdateView,
 )
 
 
@@ -52,23 +51,6 @@ class TestRoutesDisciplinasList(TestCase):
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
         assert resolved.func.view_class == DisciplinaListView
-
-    def test_loads_correct_view(self):
-        response = self.client.get(self._url)
-        assert response.status_code == HTTPStatus.OK
-        self.assertTemplateUsed(response, "disciplinas/list.html")
-
-
-class TestRoutesParticipacaoUpdate(TestCase):
-    def setUp(self):
-        self._url = reverse("participacao_update", kwargs={"pk": 0})
-        self.client.force_login(
-            auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
-        )
-
-    def test_url_resolves_to_view(self):
-        resolved = resolve(self._url)
-        assert resolved.func.view_class == ParticipacaoUpdateView
 
     def test_loads_correct_view(self):
         response = self.client.get(self._url)

@@ -3,9 +3,10 @@
 {% block title %}Criar <b>usuário</b>{% endblock %}
 
 {% block content %}
-  <form method="post" class="form">
+  <form method="post" class="form" action=".">
     {% csrf_token %}
     {{ form.as_p }}
+    {{ user.as_p }}
     <button type="submit" class="button">Salvar</button>
   </form>
 {% endblock %}
