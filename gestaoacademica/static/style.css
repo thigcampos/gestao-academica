@@ -32,6 +32,18 @@ footer {
     color: var(--label-accent-disabled);
 }
 
+.messages {
+    list-style-type: none;
+    padding-left: 0;
+    
+    li {
+        border-radius: .5rem;
+        padding: 1rem;
+        background-color: var(--fill-primary-disabled);
+        color: var(--label-accent-default)
+    }
+}
+
 .disciplina-list {
     gap: 1rem;
     display: flex;
