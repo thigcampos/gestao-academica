@@ -36,9 +36,12 @@ class Sala(models.Model):
     capacidade = models.IntegerField(default=0)
 
 class Disciplina(models.Model):
-    nome = models.TextField(name="Nome da disciplina", default="")
+    nome = models.TextField(verbose_name="Nome da disciplina", default="")
     dependencia = models.ForeignKey('self', on_delete = models.SET_NULL,null=True)    
     cargaHoraria = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        return self.nome
 
 
 
