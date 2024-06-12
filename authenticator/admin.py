@@ -6,6 +6,7 @@ from gestaoacademica.models import (
     Turma,
     Professor,
     OfertaDisciplina,
+    Sala
 )
 
 
