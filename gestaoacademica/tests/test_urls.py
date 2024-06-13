@@ -27,7 +27,7 @@ class TestRoutesLogin(TestCase):
 
 class TestRoutesAlunosHome(TestCase):
     def setUp(self):
-        self._url = reverse("alunos_home")
+        self._url = reverse("home_page")
         self.client.force_login(
             auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
         )
@@ -39,7 +39,7 @@ class TestRoutesAlunosHome(TestCase):
     def test_loads_correct_view(self):
         response = self.client.get(self._url)
         assert response.status_code == HTTPStatus.OK
-        self.assertTemplateUsed(response, "alunos/home.html")
+        self.assertTemplateUsed(response, "general/home.html")
 
 
 class TestRoutesAlunosCreate(TestCase):

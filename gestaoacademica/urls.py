@@ -25,7 +25,7 @@ from gestaoacademica.views import (
     OfertaDisciplinaListView,
     ParticipacaoCreateView,
     AlunoCreateView,
-    AlunoDisciplinaListView
+    AlunoDisciplinaListView,
 )
 
 urlpatterns = [
@@ -45,5 +45,9 @@ urlpatterns = [
         ParticipacaoCreateView.as_view(),
         name="participacao_create",
     ),
-    path("alunos/disciplinas", AlunoDisciplinaListView.as_view(), name="aluno_disciplina_list")
+    path(
+        "alunos/disciplinas",
+        AlunoDisciplinaListView.as_view(),
+        name="aluno_disciplina_list",
+    ),
 ]
