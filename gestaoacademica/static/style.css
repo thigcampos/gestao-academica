@@ -50,7 +50,7 @@ footer {
     flex-direction: column;
 }
 
-.status_container, .card {
+.card {
     gap: 1rem;
     width: 40vw;
     display: flex;
@@ -75,22 +75,19 @@ footer {
     list-style-type: none;
 }
 
-.status_title {
-    margin: 0;
-    font-size: 1.5rem;
-}
 
-.menu {
-    width: 40vw;
-}
-
-.status_item-name {
+.card_item-name {
     margin: 0;
     color: var(--label-accent-disabled);
 }
 
-.status_item-value {
+.card_item-value {
+    text-transform: lowercase;
     color: var(--label-accent-default);
+}
+
+.menu {
+    width: 40vw;
 }
 
 b {
