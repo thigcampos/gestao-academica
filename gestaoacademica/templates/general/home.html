@@ -13,11 +13,15 @@
     <menu class="menu">
         <div class="menu_row">
             <a href="disciplinas/" class="menu_row-item">Matricular-se</a>
-            <a href="alunos/disciplina" class="menu_row-item">Minhas disciplinas</a>
+            <a href="alunos/disciplinas" class="menu_row-item">Minhas disciplinas</a>
         </div>
         <div class="menu_row">
-            <a href="admin/" disabled class="menu_row-item">Acessar Admin</a>
-            <a href="accounts/logout/" disabled class="menu_row-item">Logout</a>
+            {% if user.is_superuser %}
+            <a href="admin/" class="menu_row-item">Acessar admin</a>
+            {% else %}
+            <a href="alunos/lista-espera" class="menu_row-item">Lista de espera</a>
+            {% endif %}
+            <a href="accounts/logout/" class="menu_row-item">Logout</a>
         </div>
   </menu>
 {% endblock %}

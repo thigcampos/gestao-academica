@@ -6,7 +6,15 @@ from model_bakery.baker import make
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, OfertaDisciplina, Disciplina, Turma, Professor, Sala
+from gestaoacademica.models import (
+    Aluno,
+    OfertaDisciplina,
+    Disciplina,
+    Turma,
+    Professor,
+    Sala,
+    Participacao
+)
 
 
 class TestAlunoCreateView(TestCase):
@@ -63,9 +71,15 @@ class TestParticipacaoCreateView(TestCase):
         disciplina = make(Disciplina)
         sala = make(Sala)
         oferta_disciplina = make(
-            OfertaDisciplina, turma=turma, disciplina=disciplina, professor=professor, sala=sala
+            OfertaDisciplina,
+            turma=turma,
+            disciplina=disciplina,
+            professor=professor,
+            sala=sala,
         )
-        post_data = {"oferta-disciplina": [oferta_disciplina.id]}
 
+        post_data = {"oferta-disciplina": [oferta_disciplina.id]}
         response = self.client.post(self._url, data=post_data)
         assert response.status_code == HTTPStatus.FOUND
+        participacao = Participacao.objects.filter(aluno=self.aluno)
+        assert participacao.count() > 0

@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from authenticator import models as auth_models
 from gestaoacademica.views import (
-    AlunoHomeView,
+    HomePageView,
     AlunoCreateView,
     OfertaDisciplinaListView,
 )
@@ -27,19 +27,19 @@ class TestRoutesLogin(TestCase):
 
 class TestRoutesAlunosHome(TestCase):
     def setUp(self):
-        self._url = reverse("alunos_home")
+        self._url = reverse("home_page")
         self.client.force_login(
             auth_models.User.objects.get_or_create(email="testuser@mail.com")[0]
         )
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
-        assert resolved.func.view_class == AlunoHomeView
+        assert resolved.func.view_class == HomePageView
 
     def test_loads_correct_view(self):
         response = self.client.get(self._url)
         assert response.status_code == HTTPStatus.OK
-        self.assertTemplateUsed(response, "alunos/home.html")
+        self.assertTemplateUsed(response, "general/home.html")
 
 
 class TestRoutesAlunosCreate(TestCase):
