@@ -30,7 +30,6 @@ from gestaoacademica.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/register/", UserCreateView.as_view(), name="accounts_register"),
     path("accounts/login/", auth_views.LoginView.as_view(), name="accounts_login"),
     path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
     path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
