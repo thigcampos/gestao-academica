@@ -13,7 +13,7 @@ from gestaoacademica.models import (
     Turma,
     Professor,
     Sala,
-    Participacao
+    Participacao,
 )
 
 

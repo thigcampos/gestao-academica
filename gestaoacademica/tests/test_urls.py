@@ -6,19 +6,19 @@ from model_bakery.baker import make
 
 from authenticator.models import User
 from gestaoacademica.models import (
-        Aluno,
-        OfertaDisciplina,
-        Turma,
-        Sala,
-        Disciplina,
-        Professor
+    Aluno,
+    OfertaDisciplina,
+    Turma,
+    Sala,
+    Disciplina,
+    Professor,
 )
 from gestaoacademica.views import (
     HomePageView,
     AlunoCreateView,
     OfertaDisciplinaListView,
     AlunoDisciplinaListView,
-    ParticipacaoCreateView
+    ParticipacaoCreateView,
 )
 
 

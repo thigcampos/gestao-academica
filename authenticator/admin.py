@@ -12,7 +12,14 @@ from gestaoacademica.models import (
 
 
 @admin.register(
-    Aluno, Disciplina, Participacao, Turma, Professor, OfertaDisciplina, Sala,ListaDeEspera
+    Aluno,
+    Disciplina,
+    Participacao,
+    Turma,
+    Professor,
+    OfertaDisciplina,
+    Sala,
+    ListaDeEspera,
 )
 class PersonAdmin(admin.ModelAdmin):
     pass

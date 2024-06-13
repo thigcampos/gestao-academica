@@ -86,7 +86,8 @@ class Participacao(models.Model):
     ofertaDisciplina = models.ForeignKey(
         OfertaDisciplina, on_delete=models.CASCADE, null=True
     )
- 
+
+
 class ListaDeEspera(models.Model):
     aluno = models.ManyToManyField(Aluno)
     ofertaDisciplina = models.ForeignKey(
