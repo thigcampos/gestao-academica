@@ -57,3 +57,7 @@ Open coverage details:
 pipenv run coverage html
 ```
 
+### 5. Generate UML 
+```
+pipenv run python manage.py generate_puml --file diagram.puml --include auth contenttypes --add-help --add-legend
+```
