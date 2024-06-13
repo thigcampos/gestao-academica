@@ -10,17 +10,17 @@ from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao
 from gestaoacademica.forms import AlunoForm
 
 
-class AlunoHomeView(LoginRequiredMixin, TemplateView):
+class HomePageView(LoginRequiredMixin, TemplateView):
     model = Aluno
     login_url = "/accounts/login"
-    template_name = "alunos/home.html"
+    template_name = "general/home.html"
 
 
 class AlunoCreateView(CreateView):
     model = Aluno
     form_class = AlunoForm
     template_name = "alunos/create.html"
-    success_url = reverse_lazy("alunos_home")
+    success_url = reverse_lazy("home_page")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,7 +56,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
     model = Participacao
     fields = ["aluno, ofertaDisciplina"]
     template_name = "disciplinas/list.html"
-    success_url = reverse_lazy("alunos_home")
+    success_url = reverse_lazy("home_page")
     failed_url = reverse_lazy("oferta_disciplina_list")
 
     def post(self, request, *args, **kwargs):
@@ -71,7 +71,9 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
 
         for oferta_id in oferta_ids_list:
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id)[0]
-            oferta_dia_horario = f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
+            oferta_dia_horario = (
+                f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
+            )
             print(oferta_disciplina)
             if oferta_dia_horario not in dia_horarios:
                 dia_horarios.append(oferta_dia_horario)
@@ -84,7 +86,10 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
                 oferta_disciplina.sala.capacidade
                 == oferta_disciplina.turma.aluno.count()
             ):
-                messages.error(request, f"Disciplina { oferta_disciplina.disciplina.nome } com capacidade máxima")
+                messages.error(
+                    request,
+                    f"Disciplina { oferta_disciplina.disciplina.nome } com capacidade máxima",
+                )
                 return HttpResponseRedirect(self.failed_url)
 
             participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
