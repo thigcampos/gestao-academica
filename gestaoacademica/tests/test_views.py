@@ -13,6 +13,7 @@ from gestaoacademica.models import (
     Turma,
     Professor,
     Sala,
+    Participacao
 )
 
 
@@ -76,7 +77,9 @@ class TestParticipacaoCreateView(TestCase):
             professor=professor,
             sala=sala,
         )
-        post_data = {"oferta-disciplina": [oferta_disciplina.id]}
 
+        post_data = {"oferta-disciplina": [oferta_disciplina.id]}
         response = self.client.post(self._url, data=post_data)
         assert response.status_code == HTTPStatus.FOUND
+        participacao = Participacao.objects.filter(aluno=self.aluno)
+        assert participacao.count() > 0
