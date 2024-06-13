@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from authenticator import models as auth_models
 from gestaoacademica.views import (
-    AlunoHomeView,
+    HomePageView,
     AlunoCreateView,
     OfertaDisciplinaListView,
 )
@@ -34,7 +34,7 @@ class TestRoutesAlunosHome(TestCase):
 
     def test_url_resolves_to_view(self):
         resolved = resolve(self._url)
-        assert resolved.func.view_class == AlunoHomeView
+        assert resolved.func.view_class == HomePageView
 
     def test_loads_correct_view(self):
         response = self.client.get(self._url)

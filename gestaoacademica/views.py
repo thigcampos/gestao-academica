@@ -74,7 +74,6 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
             oferta_dia_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             )
-            print(oferta_disciplina)
             if oferta_dia_horario not in dia_horarios:
                 dia_horarios.append(oferta_dia_horario)
 
