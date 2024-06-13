@@ -87,7 +87,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CreateView):
             ):
                 messages.error(
                     request,
-                    f"Disciplina { oferta_disciplina.disciplina.nome } com capacidade máxima",
+                    f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima",
                 )
                 return HttpResponseRedirect(self.failed_url)
 
