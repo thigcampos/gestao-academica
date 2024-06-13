@@ -19,10 +19,10 @@
             <label for="oferta-disciplina={{oferta_disciplina.id}}">{{ oferta_disciplina.disciplina.nome }}</label>
         </header>
         <ul class="card_list">
-            <li class="card_item-name">Professor: <span class="card_item-value">{{oferta_disciplina.professor.nome}} {{oferta_disciplina.professor.sobrenome}}</span></li>
-            <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.id}}</span></li>
+            <li class="card_item-name">Professor: <span class="card_item-value">{{oferta_disciplina.professor.nome|lower}} {{oferta_disciplina.professor.sobrenome}}</span></li>
+            <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.idSala}}</span></li>
             <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
-            <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana}}</li>
+            <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
         </ul>
     </div>
     {% endfor %}

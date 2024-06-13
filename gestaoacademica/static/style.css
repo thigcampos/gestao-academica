@@ -82,7 +82,7 @@ footer {
 }
 
 .card_item-value {
-    text-transform: lowercase;
+    text-transform: capitalize;
     color: var(--label-accent-default);
 }
 
