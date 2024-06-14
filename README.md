@@ -35,6 +35,27 @@ pipenv install --ignore-pipfile
 ```
 Now, let's setup the database.
 
+#### 1.3 Run migrations:
+```
+python manage.py makemigrations
+```
+
+Then, run:
+
+```
+python manage.py migrate
+```
+
+#### 1.4 Populate the database
+Give `execute` permissions to our setup script:
+```
+chmod +x setup.sh
+```
+
+Then, run it:
+```
+./setup.sh
+```
 ### 2. Run server
 ```
 pipenv run ./manage.py runserver 8000
@@ -47,7 +68,7 @@ You can also access http://localhost:8000/admin.
 pipenv run pytest
 ```
 
-### 4. Run coverage
+### 4. Run cov erage
 ```
 pipenv run coverage run -m pytest
 ```
