@@ -60,7 +60,8 @@ class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView)
         aluno = Aluno.objects.filter(user=self.request.user).first()
         diciplinasInscritas = Participacao.objects.filter(aluno=aluno)
         context['aluno'] = aluno
-        context['diciplinasInscritas'] = diciplinasInscritas
+        context['diciplinasInscritas'] = [disciplina.ofertaDisciplina for disciplina in diciplinasInscritas]
+        context['len_diciplinasInscritas'] = len(context['diciplinasInscritas'])
         return context
 
 class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView):
@@ -73,8 +74,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
 
     def post(self, request, *args, **kwargs):
         oferta_ids_list = request.POST.getlist("oferta-disciplina")
-        user = User.objects.filter(email=request.user).first()
-        aluno = Aluno.objects.filter(user=user).first()
+        aluno = Aluno.objects.filter(user=self.request.user).first()
         dia_horarios = []
 
         if len(oferta_ids_list) > 3:
@@ -82,6 +82,10 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
             return HttpResponseRedirect(self.failed_url)
 
         for oferta_id in oferta_ids_list:
+            if Participacao.objects.filter(aluno = aluno).count() >= 3:
+                messages.error(request, "Créditos excedidos, máximo 3")
+                return HttpResponseRedirect(self.failed_url)
+                
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
             oferta_dia_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"

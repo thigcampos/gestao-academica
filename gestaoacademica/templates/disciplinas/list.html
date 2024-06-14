@@ -14,8 +14,15 @@
    {% csrf_token %}
     {% for oferta_disciplina in object_list %}
     <div class="card">
+        
         <header>
-            <input id="oferta-disciplina={{oferta_disciplina.id}}" type="checkbox" name="oferta-disciplina" value="{{ oferta_disciplina.id }}"/>
+
+            {% if oferta_disciplina in  diciplinasInscritas %}
+                <p>Já inscrito</p>
+            {% else %}
+                <input id="oferta-disciplina={{oferta_disciplina.id}}" type="checkbox" name="oferta-disciplina" value="{{ oferta_disciplina.id }}"/>
+            {% endif %}
+            
             <label for="oferta-disciplina={{oferta_disciplina.id}}">{{ oferta_disciplina.disciplina.nome }}</label>
         </header>
         <ul class="card_list">
@@ -28,20 +35,18 @@
     {% endfor %}
     <button type="submit" class="button">Salvar</button>
 </form>
-<div>
-    <h3>Incrições Realizadas x de 3</h3>
-    <div>
-        <div>
+{% if diciplinasInscritas %}
+    <div class="div-diciplinas-info">
+        <h3>Incrições Realizadas {{len_diciplinasInscritas}} de 3</h3>
+        <div class="diciplinas-info">
+            
+            {% for disciplina in diciplinasInscritas %}
             <div>
-                <p>Matéria (disciplina + Professor)</p>
+                <p>{{disciplina.disciplina.nome}} ({{disciplina.professor.nome}} {{disciplina.professor.sobrenome}}) : {{disciplina.diaDaSemana}} {{disciplina.horarioInicio}} - {{disciplina.horarioFim}}</p>
             </div>
-            <div>
-                <p>horario</p>
-            </div>
+    
+            {% endfor %}
         </div>
-        {% for disciplina in diciplinasInscritas %}
-            <p>{{disciplina.ofertaDisciplina.professor }}</p>
-        {% endfor %}
     </div>
-</div>
+{% endif  %}
 {% endblock %}
