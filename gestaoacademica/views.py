@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao
+from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao, Turma
 from gestaoacademica.forms import AlunoForm
 
 from django.views.generic.base import ContextMixin
@@ -16,7 +16,7 @@ from django.views.generic.base import ContextMixin
 class CommonContextMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_creation_form"] = UserCreationForm()
+        context["user_creation_form"] = UserCreationForm
         return context
 
 
@@ -114,6 +114,10 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                     f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima",
                 )
                 return HttpResponseRedirect(self.failed_url)
+
+            turma = Turma.objects.filter(pk=oferta_disciplina.turma.id).first()
+            turma.aluno.add(aluno)
+            turma.save()
 
             participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
             participacao.save()

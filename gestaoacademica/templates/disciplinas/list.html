@@ -30,6 +30,7 @@
             <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.idSala}}</span></li>
             <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
             <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
+            <li class="card_item-name">Quantidade de Inscritos: <span class="card_item-value">{{oferta_disciplina.turma.aluno.all.count }} de {{ oferta_disciplina.sala.capacidade }}</span></li>
         </ul>
     </div>
     {% endfor %}

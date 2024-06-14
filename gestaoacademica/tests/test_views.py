@@ -23,7 +23,7 @@ class TestAlunoCreateView(TestCase):
 
     def test_aluno_create_view_context(self):
         response = self.client.get(self._url)
-        assert response.context_data.get("user") == UserCreationForm
+        assert response.context_data.get("user_creation_form") == UserCreationForm
 
     def test_aluno_create_view_post(self):
         post_data = {
