@@ -11,21 +11,26 @@ from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao
 from gestaoacademica.forms import AlunoForm
 
 from django.views.generic.base import ContextMixin
+
+
 class CommonContextMixin(ContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_creation_form'] = UserCreationForm()
+        context["user_creation_form"] = UserCreationForm()
         return context
+
 
 class LoginPageView(auth_views.LoginView, CommonContextMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class HomePageView(LoginRequiredMixin, CommonContextMixin, TemplateView):
     model = Aluno
     login_url = "/accounts/login"
     template_name = "general/home.html"
+
 
 class AlunoCreateView(CommonContextMixin, CreateView):
     model = Aluno
@@ -49,6 +54,7 @@ class AlunoCreateView(CommonContextMixin, CreateView):
         )
         return HttpResponseRedirect(self.success_url)
 
+
 class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView):
     login_url = "/accounts/login"
     model = OfertaDisciplina
@@ -59,10 +65,13 @@ class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView)
         context = super().get_context_data(**kwargs)
         aluno = Aluno.objects.filter(user=self.request.user).first()
         diciplinasInscritas = Participacao.objects.filter(aluno=aluno)
-        context['aluno'] = aluno
-        context['diciplinasInscritas'] = [disciplina.ofertaDisciplina for disciplina in diciplinasInscritas]
-        context['len_diciplinasInscritas'] = len(context['diciplinasInscritas'])
+        context["aluno"] = aluno
+        context["diciplinasInscritas"] = [
+            disciplina.ofertaDisciplina for disciplina in diciplinasInscritas
+        ]
+        context["len_diciplinasInscritas"] = len(context["diciplinasInscritas"])
         return context
+
 
 class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView):
     login_url = "/accounts/login"
@@ -82,10 +91,10 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
             return HttpResponseRedirect(self.failed_url)
 
         for oferta_id in oferta_ids_list:
-            if Participacao.objects.filter(aluno = aluno).count() >= 3:
+            if Participacao.objects.filter(aluno=aluno).count() >= 3:
                 messages.error(request, "Créditos excedidos, máximo 3")
                 return HttpResponseRedirect(self.failed_url)
-                
+
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
             oferta_dia_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
@@ -96,7 +105,10 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                 messages.error(request, "Há conflito de horários")
                 return HttpResponseRedirect(self.failed_url)
 
-            if oferta_disciplina.sala.capacidade == oferta_disciplina.turma.aluno.count():
+            if (
+                oferta_disciplina.sala.capacidade
+                == oferta_disciplina.turma.aluno.count()
+            ):
                 messages.error(
                     request,
                     f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima",
@@ -107,6 +119,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
             participacao.save()
         messages.success(request, "Inscrição feita com sucesso")
         return HttpResponseRedirect(self.success_url)
+
 
 class AlunoDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView):
     login_url = "/accounts/login"
