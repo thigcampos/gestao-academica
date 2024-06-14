@@ -28,4 +28,20 @@
     {% endfor %}
     <button type="submit" class="button">Salvar</button>
 </form>
+<div>
+    <h3>Incrições Realizadas x de 3</h3>
+    <div>
+        <div>
+            <div>
+                <p>Matéria (disciplina + Professor)</p>
+            </div>
+            <div>
+                <p>horario</p>
+            </div>
+        </div>
+        {% for disciplina in diciplinasInscritas %}
+            <p>{{disciplina.ofertaDisciplina.professor }}</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

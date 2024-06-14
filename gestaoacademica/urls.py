@@ -26,11 +26,12 @@ from gestaoacademica.views import (
     ParticipacaoCreateView,
     AlunoCreateView,
     AlunoDisciplinaListView,
+    LoginPageView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/login/", auth_views.LoginView.as_view(), name="accounts_login"),
+    path("accounts/login/", LoginPageView.as_view(), name="accounts_login"),
     path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
     path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
     path("", HomePageView.as_view(), name="home_page"),
