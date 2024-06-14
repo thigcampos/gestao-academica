@@ -28,8 +28,8 @@
         <ul class="card_list">
             <li class="card_item-name">Professor: <span class="card_item-value">{{oferta_disciplina.professor.nome|lower}} {{oferta_disciplina.professor.sobrenome}}</span></li>
             <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.idSala}}</span></li>
-            <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
             <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
+            <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
         </ul>
     </div>
     {% endfor %}
@@ -37,7 +37,7 @@
 </form>
 {% if diciplinasInscritas %}
     <div class="div-diciplinas-info">
-        <h3>Incrições Realizadas {{len_diciplinasInscritas}} de 3</h3>
+        <h3>Incrições Realizadas {{len_diciplinasInscritas}} de 3 | <a href="/alunos/disciplinas">ir para minhas inscrições</a></h3> 
         <div class="diciplinas-info">
             
             {% for disciplina in diciplinasInscritas %}
