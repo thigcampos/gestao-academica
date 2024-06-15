@@ -76,7 +76,7 @@ class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView)
 class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView):
     login_url = "/accounts/login"
     model = Participacao
-    fields = ["aluno, ofertaDisciplina"]
+    fields = ["aluno", "ofertaDisciplina"]
     template_name = "disciplinas/list.html"
     success_url = reverse_lazy("home_page")
     failed_url = reverse_lazy("oferta_disciplina_list")
@@ -84,24 +84,26 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
     def post(self, request, *args, **kwargs):
         oferta_ids_list = request.POST.getlist("oferta-disciplina")
         aluno = Aluno.objects.filter(user=self.request.user).first()
-        dia_horarios = []
 
+        # Check if more than 3 credits are selected
         if len(oferta_ids_list) > 3:
             messages.error(request, "Créditos excedidos, máximo 3")
             return HttpResponseRedirect(self.failed_url)
 
-        for oferta_id in oferta_ids_list:
-            if Participacao.objects.filter(aluno=aluno).count() >= 3:
-                messages.error(request, "Créditos excedidos, máximo 3")
-                return HttpResponseRedirect(self.failed_url)
+        # Check if the student already has 3 or more registrations
+        if Participacao.objects.filter(aluno=aluno).count() >= 3:
+            messages.error(request, "Créditos excedidos, máximo 3")
+            return HttpResponseRedirect(self.failed_url)
 
+        # Check for schedule conflicts and room capacity
+        dia_horarios = []
+        for oferta_id in oferta_ids_list:
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
             oferta_dia_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             )
-            if oferta_dia_horario not in dia_horarios:
-                dia_horarios.append(oferta_dia_horario)
-            else:
+
+            if oferta_dia_horario in dia_horarios:
                 messages.error(request, "Há conflito de horários")
                 return HttpResponseRedirect(self.failed_url)
 
@@ -115,12 +117,18 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                 )
                 return HttpResponseRedirect(self.failed_url)
 
+            dia_horarios.append(oferta_dia_horario)
+
+        # Enroll the student in the selected courses
+        for oferta_id in oferta_ids_list:
+            oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
             turma = Turma.objects.filter(pk=oferta_disciplina.turma.id).first()
             turma.aluno.add(aluno)
             turma.save()
 
             participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
             participacao.save()
+
         messages.success(request, "Inscrição feita com sucesso")
         return HttpResponseRedirect(self.success_url)
 
