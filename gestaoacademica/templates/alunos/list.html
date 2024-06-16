@@ -21,8 +21,23 @@
             <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.idSala}}</span></li>
             <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
             <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
+            <li class="card_item-name">Status: <span class="card_item-value">Inscrito</li>
+            <a href="">Cancelar Inscrição</a>
         </ul>
     </div>
     {% endfor %}
+    {% if request.session.lista_de_espera %}
+    <div class="card">
+        <header>
+            <h2>Disciplinas na lista de espera:</h2>
+        </header>
+        {% for item in request.session.lista_de_espera%}
+        
+        <li class="card_item-name"> {{item}} </li>
+        <a href="">Sair da lista de espera</a>
+        
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

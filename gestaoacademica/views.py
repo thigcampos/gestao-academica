@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao, Turma
+from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao, Turma, Disciplina, ListaDeEspera
 from gestaoacademica.forms import AlunoForm
 
 from django.views.generic.base import ContextMixin
@@ -85,6 +85,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         oferta_ids_list = request.POST.getlist("oferta-disciplina")
         aluno = Aluno.objects.filter(user=self.request.user).first()
         dia_horarios = []
+        materias_com_pendencia = []
 
         if len(oferta_ids_list) > 3:
             messages.error(request, "Créditos excedidos, máximo 3")
@@ -109,11 +110,8 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                 oferta_disciplina.sala.capacidade
                 == oferta_disciplina.turma.aluno.count()
             ):
-                messages.error(
-                    request,
-                    f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima",
-                )
-                return HttpResponseRedirect(self.failed_url)
+                materias_com_pendencia.append(f"{str(oferta_disciplina)}")
+                continue
 
             turma = Turma.objects.filter(pk=oferta_disciplina.turma.id).first()
             turma.aluno.add(aluno)
@@ -121,9 +119,51 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
 
             participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
             participacao.save()
+            
+        if len(materias_com_pendencia) >0:
+            request.session['test'] = materias_com_pendencia
+            return HttpResponseRedirect(self.failed_url)
+            
         messages.success(request, "Inscrição feita com sucesso")
         return HttpResponseRedirect(self.success_url)
 
+class SeInscreverEmoutraDisciplina(LoginRequiredMixin, CommonContextMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        oferta_ids_list = request.POST.getlist("disciplina-pendente")[0]
+        temp = request.session['test'][:]
+        temp.remove(oferta_ids_list)
+        request.session['test'] = temp
+        return HttpResponseRedirect(reverse_lazy("oferta_disciplina_list"))
+    
+class EntrarNaListaDeEspera(LoginRequiredMixin, CommonContextMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        oferta_ids_list = request.POST.getlist("disciplina-pendente")[0]
+        temp = request.session['test'][:]
+        temp.remove(oferta_ids_list)
+        request.session['test'] = temp
+        namedisciplina = oferta_ids_list.split(" (")[0]
+        print(namedisciplina)
+        disciplina = Disciplina.objects.filter(nome=namedisciplina)[0]
+        print(disciplina)
+        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
+        aluno = Aluno.objects.filter(user=self.request.user).first()
+        if ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina).exists():
+            listaDeEspera =  ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina)[0]
+            listaDeEspera.aluno.add(aluno)
+        else:
+            listaDeEspera = ListaDeEspera(ofertaDisciplina=ofertaDisciplina)
+            listaDeEspera.save()
+            listaDeEspera.aluno.add(aluno)
+        
+        if 'lista_de_espera' in request.session:
+            request.session['lista_de_espera'].append(str(ofertaDisciplina))
+        else:
+            request.session['lista_de_espera'] = [str(ofertaDisciplina)]
+        
+        
+        messages.success(request, "Aluno inserido na lista de espera!")
+        return HttpResponseRedirect(reverse_lazy("oferta_disciplina_list"))
+    
 
 class AlunoDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView):
     login_url = "/accounts/login"

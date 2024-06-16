@@ -10,6 +10,20 @@
     {% endfor %}
 </ul>
 {% endif %}
+{% if request.session.test %}
+    <h3>Algumas matérias que você escolheu estão cheias:</h3>
+    {% for disciplina_pendente in  request.session.test %}
+    <form method="post">
+        {% csrf_token %}
+        <p>{{disciplina_pendente}}</p>
+        <input type="hidden" value="{{disciplina_pendente}}" name="disciplina-pendente">
+        <button formaction="{% url 'entrar_na_lista_de_espera' %}">Entrar na Lista de Espera</button>
+        <button formaction="{% url 'se_inscrever_em_outra_materia' %}" >Se inscrever em outra disciplina</button>
+    </form>
+
+    {% endfor %}
+   
+{% endif %}
 <form name="oferta-disciplina-form" method="post" class="disciplina-list" action="{% url 'participacao_create' %}">
    {% csrf_token %}
     {% for oferta_disciplina in object_list %}
@@ -43,11 +57,24 @@
             
             {% for disciplina in diciplinasInscritas %}
             <div>
-                <p>{{disciplina.disciplina.nome}} ({{disciplina.professor.nome}} {{disciplina.professor.sobrenome}}) : {{disciplina.diaDaSemana}} {{disciplina.horarioInicio}} - {{disciplina.horarioFim}}</p>
+                <p>{{disciplina.disciplina.nome}} ({{disciplina.professor.nome}} {{disciplina.professor.sobrenome}}) : {{disciplina.diaDaSemana}} {{disciplina.horarioInicio}} - {{disciplina.horarioFim}}  STATUS: Inscrito</p> 
             </div>
     
             {% endfor %}
         </div>
+        
+        {% if request.session.lista_de_espera %}
+        <div class="diciplinas-info">
+            <h3>Lista de Espera</h3>
+            
+            {% for item in request.session.lista_de_espera%}
+            <div>
+                <p>{{item}}  STATUS: Na lista de espera</p> 
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
     </div>
 {% endif  %}
 {% endblock %}
