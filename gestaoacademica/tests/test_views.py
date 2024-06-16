@@ -235,6 +235,8 @@ class AlunoDisciplinaListViewTest(TestCase):
         """Test view with existing participations"""
         oferta_disciplina1 = make(OfertaDisciplina)
         oferta_disciplina2 = make(OfertaDisciplina)
+        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina1)
+        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2)
 
         self.client.login(email="testuser@mail.com", password="secret")
 
