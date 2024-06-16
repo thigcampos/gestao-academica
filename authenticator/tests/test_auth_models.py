@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from model_bakery.baker import make
+
+from authenticator.models import User
 
 
 class UsersManagersTests(TestCase):
@@ -32,11 +35,22 @@ class UsersManagersTests(TestCase):
         assert admin_user.is_active
         assert admin_user.is_staff
         assert admin_user.is_superuser
+
         try:
             self.assertIsNone(admin_user.username)
         except AttributeError:
             pass
+
+        with self.assertRaises(ValueError):
+            User.objects.create_superuser(
+                email="testsuperuser@mail.com", password="foobar", is_staff=False
+            )
+
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
                 email="testsuperuser@mail.com", password="foobar", is_superuser=False
             )
+
+    def test_user_string_representation(self):
+        user = make(User)
+        assert str(user) == user.email
