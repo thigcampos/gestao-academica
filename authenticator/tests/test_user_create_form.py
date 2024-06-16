@@ -15,9 +15,10 @@ class UserCreationFormTest(TestCase):
             "password2": "strongpassword",
         }
         form = UserCreationForm(data)
-        self.assertTrue(form.is_valid())
+        assert form.is_valid()
+
         user = form.save()
-        self.assertEqual(user.email, data["email"])
+        assert user.email == data["email"]
 
     def test_invalid_email(self):
         """Test form validation with an invalid email"""
@@ -27,7 +28,7 @@ class UserCreationFormTest(TestCase):
             "password2": "strongpassword",
         }
         form = UserCreationForm(data)
-        self.assertFalse(form.is_valid())
+        assert not form.is_valid()
 
     def test_password_mismatch(self):
         """Test form validation with mismatched passwords"""
@@ -37,9 +38,10 @@ class UserCreationFormTest(TestCase):
             "password2": "differentpassword",
         }
         form = UserCreationForm(data)
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["password2"], ["The two password fields didn't match."]
+
+        assert not form.is_valid()
+        assert (
+            form.errors["password2"] == ["The two password fields didn't match."]
         )
 
     def test_save_creates_user(self):
@@ -50,10 +52,11 @@ class UserCreationFormTest(TestCase):
             "password2": "strongpassword",
         }
         form = UserCreationForm(data)
-        self.assertTrue(form.is_valid())
         user = form.save()
+
+        assert form.is_valid()
+        assert user.check_password(data["password1"])
         self.assertIsInstance(user, User)
-        self.assertTrue(user.check_password(data["password1"]))
 
     def test_save_commit_false(self):
         """Test that save method with commit=False doesn't save the user"""
@@ -66,7 +69,7 @@ class UserCreationFormTest(TestCase):
         user = form.save(commit=False)
 
         assert form.is_valid()
-        assert hasattr(user, "pk")  # Check if user object has a primary key
+        assert hasattr(user, "pk")
         self.assertIsInstance(user, User)
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(email=data["email"])

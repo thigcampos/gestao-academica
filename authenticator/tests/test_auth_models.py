@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from model_bakery.baker import make
+
+from authenticator.models import User
 
 
 class UsersManagersTests(TestCase):
@@ -51,3 +54,7 @@ class UsersManagersTests(TestCase):
                 password="foobar",
                 is_superuser=False
             )
+
+    def test_user_string_representation(self):
+        user = make(User)
+        assert str(user) == user.email
