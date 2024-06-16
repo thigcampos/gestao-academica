@@ -40,9 +40,7 @@ class UserCreationFormTest(TestCase):
         form = UserCreationForm(data)
 
         assert not form.is_valid()
-        assert (
-            form.errors["password2"] == ["The two password fields didn't match."]
-        )
+        assert form.errors["password2"] == ["The two password fields didn't match."]
 
     def test_save_creates_user(self):
         """Test that save method creates a user and sets password"""

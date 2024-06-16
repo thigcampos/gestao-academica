@@ -43,16 +43,12 @@ class UsersManagersTests(TestCase):
 
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                email="testsuperuser@mail.com",
-                password="foobar",
-                is_staff=False
+                email="testsuperuser@mail.com", password="foobar", is_staff=False
             )
 
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                email="testsuperuser@mail.com",
-                password="foobar",
-                is_superuser=False
+                email="testsuperuser@mail.com", password="foobar", is_superuser=False
             )
 
     def test_user_string_representation(self):

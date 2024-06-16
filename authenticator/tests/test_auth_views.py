@@ -9,7 +9,9 @@ class LogoutViewTest(TestCase):
 
     def setUp(self):
         """Create a logged-in user for testing"""
-        self.user = User.objects.create_user(email="testuser@mail.com", password="secret")
+        self.user = User.objects.create_user(
+            email="testuser@mail.com", password="secret"
+        )
         self.client = Client()
         self.client.login(email="testuser@mail.com", password="secret")
 
@@ -20,4 +22,4 @@ class LogoutViewTest(TestCase):
 
         # Check for redirection and user being logged out
         assert response.status_code == 302
-        assert not self.user == self.client.session.get('_auth_user')
+        assert not self.user == self.client.session.get("_auth_user")

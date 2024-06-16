@@ -61,7 +61,9 @@ class ParticipacaoCreateViewTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(email="testuser@mail.com", password="secret")
+        self.user = User.objects.create_user(
+            email="testuser@mail.com", password="secret"
+        )
         self.aluno = Aluno.objects.create(user=self.user)
 
     def test_successful_enrollment(self):
@@ -111,12 +113,18 @@ class ParticipacaoCreateViewTest(TestCase):
         assert reverse("oferta_disciplina_list") == response.url
         assert Participacao.objects.filter(aluno=self.aluno).count() == 3
         assert (
-            str(list(get_messages(response.wsgi_request))[0]) == "Créditos excedidos, máximo 3" 
+            str(list(get_messages(response.wsgi_request))[0])
+            == "Créditos excedidos, máximo 3"
         )
 
     def test_exceeded_credits_error_on_creation(self):
         ofertas_disciplinas = make(OfertaDisciplina, _quantity=4)
-        oferta_ids = [ofertas_disciplinas[0].pk, ofertas_disciplinas[1].pk,ofertas_disciplinas[2].pk,ofertas_disciplinas[3].pk]
+        oferta_ids = [
+            ofertas_disciplinas[0].pk,
+            ofertas_disciplinas[1].pk,
+            ofertas_disciplinas[2].pk,
+            ofertas_disciplinas[3].pk,
+        ]
 
         self.client.login(email="testuser@mail.com", password="secret")
 
@@ -128,7 +136,8 @@ class ParticipacaoCreateViewTest(TestCase):
         assert response.status_code == 302
         assert reverse("oferta_disciplina_list") == response.url
         assert (
-            str(list(get_messages(response.wsgi_request))[0]) == "Créditos excedidos, máximo 3" 
+            str(list(get_messages(response.wsgi_request))[0])
+            == "Créditos excedidos, máximo 3"
         )
 
     def test_schedule_conflict_error(self):
@@ -167,7 +176,8 @@ class ParticipacaoCreateViewTest(TestCase):
         assert reverse("oferta_disciplina_list") == response.url
         assert Participacao.objects.count() == 0  # No participations created
         assert (
-            str(list(get_messages(response.wsgi_request))[0]) == "Há conflito de horários" 
+            str(list(get_messages(response.wsgi_request))[0])
+            == "Há conflito de horários"
         )
 
     def test_room_capacity_error(self):
@@ -197,7 +207,8 @@ class ParticipacaoCreateViewTest(TestCase):
         assert response.status_code == 302
         assert reverse("oferta_disciplina_list") == response.url
         assert (
-            str(list(get_messages(response.wsgi_request))[0]) == f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima"
+            str(list(get_messages(response.wsgi_request))[0])
+            == f"Disciplina {oferta_disciplina.disciplina.nome} com capacidade máxima"
         )
 
 
@@ -206,7 +217,9 @@ class AlunoDisciplinaListViewTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(email="testuser@mail.com", password="secret")
+        self.user = User.objects.create_user(
+            email="testuser@mail.com", password="secret"
+        )
         self.aluno = Aluno.objects.create(user=self.user)
 
     def test_authenticated_user_view(self):
@@ -222,8 +235,6 @@ class AlunoDisciplinaListViewTest(TestCase):
         """Test view with existing participations"""
         oferta_disciplina1 = make(OfertaDisciplina)
         oferta_disciplina2 = make(OfertaDisciplina)
-        participacao1 = make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina1)
-        participacao2 = make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2)
 
         self.client.login(email="testuser@mail.com", password="secret")
 
@@ -232,12 +243,20 @@ class AlunoDisciplinaListViewTest(TestCase):
         assert response.status_code == 200
         self.assertTemplateUsed(response, "alunos/list.html")
         # Assert context data contains filtered OfertaDisciplina objects
-        assert response.context["object_list"] == [oferta_disciplina1, oferta_disciplina2]
+        assert response.context["object_list"] == [
+            oferta_disciplina1,
+            oferta_disciplina2,
+        ]
 
     def test_view_with_duplicates(self):
         """Test view handling duplicate participations for the same course"""
         oferta_disciplina = make(OfertaDisciplina)
-        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina, _quantity=2)
+        make(
+            Participacao,
+            aluno=self.aluno,
+            ofertaDisciplina=oferta_disciplina,
+            _quantity=2,
+        )
 
         self.client.login(email="testuser@mail.com", password="secret")
 
