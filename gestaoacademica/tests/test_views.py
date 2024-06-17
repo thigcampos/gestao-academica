@@ -5,7 +5,7 @@ from django.contrib.messages import get_messages
 from http import HTTPStatus
 from model_bakery.baker import (
     make,
-)  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+)
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
@@ -56,9 +56,7 @@ class TestOfertaDisciplinaListView(TestCase):
 
     def test_get_list_of_oferta_disciplina(self):
         # Teste para verificar se a lista de ofertas de disciplinas é retornada corretamente
-        oferta_disciplina = make(
-            OfertaDisciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        oferta_disciplina = make(OfertaDisciplina)
         response = self.client.get(self.url)
         oferta_disciplina_list = response.context["object_list"]
         assert list(oferta_disciplina_list) == [oferta_disciplina]
@@ -74,55 +72,58 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_successful_enrollment(self):
         # Teste para verificar a inscrição bem-sucedida em uma disciplina
-        turma = make(
-            Turma, aluno=[]
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        # Para tornar o teste o mais realista possível, criamos uma instância persistente de cada classe necessária
+        turma = make(Turma, aluno=[])
         for index in range(1, 11):
-            aluno = make(
-                Aluno, prontuario=index
-            )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+            aluno = make(Aluno, prontuario=index)
             turma.aluno.add(aluno)
-        professor = make(
-            Professor
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        disciplina = make(
-            Disciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        sala = make(
-            Sala
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        oferta_disciplina = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        professor = make(Professor)
+        disciplina = make(Disciplina)
+        sala = make(Sala)
+        oferta_disciplina = make(
             OfertaDisciplina,
             turma=turma,
             disciplina=disciplina,
             professor=professor,
             sala=sala,
         )
+        # Após a criação da oferta da disciplina, montamos uma lista contendo o seu id
         oferta_ids = [oferta_disciplina.pk]
+        # Realizamos o login
         self.client.login(email="testuser@mail.com", password="secret")
+        # Realizamos a requisição
         response = self.client.post(
             reverse("participacao_create"), {"oferta-disciplina": oferta_ids}
         )
+        # Validamos se o sistema faz o redirect
         assert response.status_code == 302
+        # Validamos se o usuário foi redirecionado para a tela inicial
         assert response.url == reverse("home_page")
+        # Validamos se o usuário agora possui uma participacao
         assert Participacao.objects.filter(aluno=self.aluno).count() == 1
 
     def test_exceeded_credits_error(self):
         # Teste para verificar erro ao exceder o limite de créditos
-        make(
-            Participacao, aluno=self.aluno, _quantity=3
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        oferta_disciplina = make(
-            OfertaDisciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        # Criação de 4 Participações vinculados ao aluno de teste (self.aluno) usando model_bakery
+        make(Participacao, aluno=self.aluno, _quantity=4)
+        oferta_disciplina = make(OfertaDisciplina)
+        # Após a criação de uma oferta de disciplina, criamos uma lista contendo o id da oferta da disciplina
+        # Utilizamos o ID da Oferta Disciplina e o Email do aluno (disponível no corpo da requisição do formulário) para validar as informações necessárias
         oferta_ids = [oferta_disciplina.pk]
+        # Realizamos o login
         self.client.login(email="testuser@mail.com", password="secret")
+        # Enviamos o formulário com o id da Oferta de Disciplina
         response = self.client.post(
             reverse("participacao_create"), {"oferta-disciplina": oferta_ids}
         )
+
+        # Validamos se o sistema faz o redirect (a listagem de ofertas de disciplina possui uma url diferente da criação de participações)
         assert response.status_code == 302
+        # Validamos se o usuário foi redirecionado para "/disciplinas/", aqui identificada pelo nome "oferta_disciplina_list"
         assert response.url == reverse("oferta_disciplina_list")
-        assert Participacao.objects.filter(aluno=self.aluno).count() == 3
+        # Validamos se o aluno de teste possui 4 partipações (número máximo)
+        assert Participacao.objects.filter(aluno=self.aluno).count() == 4
+        # Validamos se a mensagem de erro foi exibida corretamente
         assert (
             str(list(get_messages(response.wsgi_request))[0])
             == "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)"
@@ -130,9 +131,9 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_exceeded_credits_error_too_many_disciplinas(self):
         # Teste para verificar erro ao exceder o limite de créditos na criação da participação
-        ofertas_disciplinas = make(
-            OfertaDisciplina, _quantity=5
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        # Aqui, enviamos para o sistema 5 (25 créditos) inscrições ao mesmo tempo, número que excede o limite (4/20 créditos)
+        ofertas_disciplinas = make(OfertaDisciplina, _quantity=5)
+        # Após a criação de 5 ofertas de disciplinas, criamos uma lista com o Id de cada uma das ofertas
         oferta_ids = [
             ofertas_disciplinas[0].pk,
             ofertas_disciplinas[1].pk,
@@ -141,13 +142,17 @@ class TestParticipacaoCreateView(TestCase):
             ofertas_disciplinas[4].pk,
         ]
 
+        # Realizamos o login
         self.client.login(email="testuser@mail.com", password="secret")
-
+        # Fazemos o envio das informações
         response = self.client.post(
             reverse("participacao_create"), {"oferta-disciplina": oferta_ids}
         )
+        # Validamos se o sistema faz o redirect (a listagem de ofertas de disciplina possui uma url diferente da criação de participações)
         assert response.status_code == 302
+        # Validamos se o usuário foi redirecionado para "/disciplinas/", aqui identificada pelo nome "oferta_disciplina_list"
         assert response.url == reverse("oferta_disciplina_list")
+        # Validamos se a mensagem de erro foi exibida corretamente
         assert (
             str(list(get_messages(response.wsgi_request))[0])
             == "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)"
@@ -155,16 +160,12 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_dependecies_not_done(self):
         # Teste para verificar erro ao tentar inscrever-se em uma disciplina com dependência não realizada
-        professor = make(
-            Professor
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        primary_disciplina = make(
-            Disciplina, nome="Dependencia"
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        secondary_disciplina = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        professor = make(Professor)
+        primary_disciplina = make(Disciplina, nome="Dependencia")
+        secondary_disciplina = make(
             Disciplina, dependencia=primary_disciplina, nome="Disciplina"
         )
-        oferta_disciplina = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        oferta_disciplina = make(
             OfertaDisciplina, disciplina=secondary_disciplina, professor=professor
         )
         oferta_ids = [oferta_disciplina.pk]
@@ -186,36 +187,26 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_schedule_conflict_error(self):
         # Teste para verificar erro de conflito de horários
-        turma = make(
-            Turma, aluno=[]
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        turma = make(Turma, aluno=[])
         turma.aluno.add(self.aluno)
-        professor = make(
-            Professor
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        disciplina = make(
-            Disciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        sala = make(
-            Sala, capacidade=10
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        oferta_disciplina1 = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        professor = make(Professor)
+        disciplina = make(Disciplina)
+        sala = make(Sala, capacidade=10)
+        oferta_disciplina1 = make(
             OfertaDisciplina,
             turma=turma,
             disciplina=disciplina,
             professor=professor,
             sala=sala,
         )
-        oferta_disciplina2 = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        oferta_disciplina2 = make(
             OfertaDisciplina,
             turma=turma,
             disciplina=disciplina,
             professor=professor,
             sala=sala,
         )
-        make(
-            Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2)
         oferta_ids = [oferta_disciplina1.pk]
         self.client.login(email="testuser@mail.com", password="secret")
         response = self.client.post(
@@ -231,33 +222,45 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_room_capacity_error(self):
         # Teste para verificar erro ao exceder a capacidade da sala
-        turma = make(
-            Turma, aluno=[]
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        # Criaremos uma sala com capacidade sendo 1 e para preenche-lá, criamos o "other_aluno"
+        other_aluno = make(Aluno, prontuario="BP300")
+        turma = make(Turma, aluno=[])
         turma.aluno.add(self.aluno)
-        professor = make(
-            Professor
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        disciplina = make(
-            Disciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        sala = make(
-            Sala, capacidade=1
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        oferta_disciplina = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        professor = make(Professor)
+        disciplina = make(Disciplina)
+        sala = make(Sala, capacidade=1)
+        oferta_disciplina = make(
             OfertaDisciplina,
             turma=turma,
             disciplina=disciplina,
             professor=professor,
             sala=sala,
         )
+        # Fazemos o login com a conta do aluno de teste
         self.client.login(email="testuser@mail.com", password="secret")
         oferta_ids = [oferta_disciplina.pk]
+        # Realizamos a requisição
         response = self.client.post(
             reverse("participacao_create"), {"oferta-disciplina": oferta_ids}
         )
+        # Validamos se o usuário foi redirecionado
         assert response.status_code == 302
+        # Validamos se o usuário está na lista de andamentos, como o esperado
         assert response.url == reverse("oferta_disciplina_list")
+        # Validamos se o usuário foi notificado que há inscrição falhou e que há disciplinas pendentes
+        assert self.client.session["disciplinas_pendentes"] == [str(oferta_disciplina)]
+        # No topo da listagem de ofertas de disciplina, o usuário é apresentado com duas opções, entrar na lista de espera ou inscrever-se em outra disciplina
+        # Neste presente teste, optaremos pela segunda opção, por já existir um teste para a criação da lista de espera
+        response_discard_disciplina = self.client.post(
+            reverse("other_participacao_create"),
+            {"disciplina-pendente": str(oferta_disciplina)},
+        )
+        # Validamos se o usuário foi redirecionado
+        assert response.status_code == 302
+        # Validamos se o usuário está na lista de andamentos, como o esperado
+        assert response.url == reverse("oferta_disciplina_list")
+        # Validamos se a lista de disciplinas pendentes de uma resolução está vazia
+        assert self.client.session["disciplinas_pendentes"] == []
 
 
 class TestAlunoDisciplinaListView(TestCase):
@@ -277,18 +280,10 @@ class TestAlunoDisciplinaListView(TestCase):
 
     def test_view_with_participations(self):
         # Teste para verificar a visualização com participações existentes
-        oferta_disciplina1 = make(
-            OfertaDisciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        oferta_disciplina2 = make(
-            OfertaDisciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        make(
-            Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina1
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        make(
-            Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        oferta_disciplina1 = make(OfertaDisciplina)
+        oferta_disciplina2 = make(OfertaDisciplina)
+        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina1)
+        make(Participacao, aluno=self.aluno, ofertaDisciplina=oferta_disciplina2)
         self.client.login(email="testuser@mail.com", password="secret")
         response = self.client.get(reverse("aluno_disciplina_list"))
         assert response.status_code == 200
@@ -331,13 +326,9 @@ class TestListaDeEsperaCreateView(TestCase):
             email="testuser@mail.com", password="secret"
         )
         self.aluno = Aluno.objects.create(user=self.user)
-        self.professor = make(
-            Professor
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.disciplina = make(
-            Disciplina, nome="Test Disciplina"
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.oferta_disciplina = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        self.professor = make(Professor)
+        self.disciplina = make(Disciplina, nome="Test Disciplina")
+        self.oferta_disciplina = make(
             OfertaDisciplina, disciplina=self.disciplina, professor=self.professor
         )
         self.client.login(email=self.user.email, password="secret")
@@ -399,13 +390,9 @@ class TestParticipacaoDeleteView(TestCase):
             email="testuser@mail.com", password="secret"
         )
         self.aluno = Aluno.objects.create(user=self.user)
-        self.disciplina = make(
-            Disciplina, nome="Test Disciplina"
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.oferta_disciplina = make(
-            OfertaDisciplina, disciplina=self.disciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.participacao = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        self.disciplina = make(Disciplina, nome="Test Disciplina")
+        self.oferta_disciplina = make(OfertaDisciplina, disciplina=self.disciplina)
+        self.participacao = make(
             Participacao, ofertaDisciplina=self.oferta_disciplina, aluno=self.aluno
         )
 
@@ -436,13 +423,9 @@ class TestListaDeEsperaDeleteView(TestCase):
             email="testuser@mail.com", password="secret"
         )
         self.aluno = Aluno.objects.create(user=self.user)
-        self.disciplina = make(
-            Disciplina, nome="Test Disciplina"
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.oferta_disciplina = make(
-            OfertaDisciplina, disciplina=self.disciplina
-        )  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
-        self.lista_de_espera = make(  # Model Bakery nos permite criar uma instância persistente da classe e mantê-la até o fim dos testes
+        self.disciplina = make(Disciplina, nome="Test Disciplina")
+        self.oferta_disciplina = make(OfertaDisciplina, disciplina=self.disciplina)
+        self.lista_de_espera = make(
             ListaDeEspera, ofertaDisciplina=self.oferta_disciplina, aluno=[self.aluno]
         )
 
