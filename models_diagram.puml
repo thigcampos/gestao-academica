@@ -80,6 +80,18 @@ class "sessions.Session <Sessões>" as sessions.Session #f4e1d6 {
 }
 
 
+class "gestaoacademica.Disciplina <Gestaoacademica>" as gestaoacademica.Disciplina #d6ebf4 {
+    disciplina
+    --
+    + id (BigAutoField)
+    + nome (TextField)
+    ~ dependencia (ForeignKey)
+    + cargaHoraria (IntegerField)
+    --
+}
+gestaoacademica.Disciplina -- gestaoacademica.Disciplina
+
+
 class "gestaoacademica.Aluno <Gestaoacademica>" as gestaoacademica.Aluno #d6ebf4 {
     Aluno da Insituição
     --
@@ -90,9 +102,11 @@ class "gestaoacademica.Aluno <Gestaoacademica>" as gestaoacademica.Aluno #d6ebf4
     + prontuario (TextField)
     + created_at (DateTimeField)
     + updated_at (DateTimeField)
+    # disciplinas_concluidas (ManyToManyField)
     --
 }
 gestaoacademica.Aluno -- authenticator.User
+gestaoacademica.Aluno *--* gestaoacademica.Disciplina
 
 
 class "gestaoacademica.Professor <Gestaoacademica>" as gestaoacademica.Professor #d6ebf4 {
@@ -128,18 +142,6 @@ class "gestaoacademica.Sala <Gestaoacademica>" as gestaoacademica.Sala #d6ebf4 {
 }
 
 
-class "gestaoacademica.Disciplina <Gestaoacademica>" as gestaoacademica.Disciplina #d6ebf4 {
-    disciplina
-    --
-    + id (BigAutoField)
-    + nome (TextField)
-    ~ dependencia (ForeignKey)
-    + cargaHoraria (IntegerField)
-    --
-}
-gestaoacademica.Disciplina -- gestaoacademica.Disciplina
-
-
 class "gestaoacademica.OfertaDisciplina <Gestaoacademica>" as gestaoacademica.OfertaDisciplina #d6ebf4 {
     oferta disciplina
     --
@@ -169,6 +171,18 @@ class "gestaoacademica.Participacao <Gestaoacademica>" as gestaoacademica.Partic
 }
 gestaoacademica.Participacao -- gestaoacademica.Aluno
 gestaoacademica.Participacao -- gestaoacademica.OfertaDisciplina
+
+
+class "gestaoacademica.ListaDeEspera <Gestaoacademica>" as gestaoacademica.ListaDeEspera #d6ebf4 {
+    lista de espera
+    --
+    + id (BigAutoField)
+    ~ ofertaDisciplina (ForeignKey)
+    # aluno (ManyToManyField)
+    --
+}
+gestaoacademica.ListaDeEspera -- gestaoacademica.OfertaDisciplina
+gestaoacademica.ListaDeEspera *--* gestaoacademica.Aluno
 
 
 @enduml
