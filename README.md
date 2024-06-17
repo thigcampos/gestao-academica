@@ -4,6 +4,7 @@
 - [Access RN01 tests](https://github.com/thigcampos/gestao-academica/blob/837a970028bac04d98bb00752e189d34e2f321b7/gestaoacademica/tests/test_views.py#L105)
 - [Access RN02 test](https://github.com/thigcampos/gestao-academica/blob/837a970028bac04d98bb00752e189d34e2f321b7/gestaoacademica/tests/test_views.py#L223)
 - [Access coverage report](https://github.com/thigcampos/gestao-academica/blob/main/report.txt)
+
 For more relevant information, access our document file, [available here](https://docs.google.com/document/d/1wjidif7AT5nD9yiiaksyZcpWJWkPXzqrcJdchuTGczU/edit?usp=sharing).
 
 ## Setup local environment

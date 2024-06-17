@@ -93,6 +93,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         conflito_agenda = []
         disciplinas_pendentes = []
 
+        # Validação de créditos (RN01): Usuário não pode exceder 20 créditos
         if len(oferta_ids) > 4:
             messages.error(
                 request,
@@ -100,6 +101,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
             )
             return HttpResponseRedirect(self.failed_url)
 
+        # Validação de créditos (RN01): Usuário não pode exceder 20 créditos
         if (
             Participacao.objects.filter(aluno=aluno).count() * 5 + len(oferta_ids) * 5
             >= 20
@@ -119,7 +121,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
 
         for oferta_id in oferta_ids:
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
-
+            # Validação de dependência
             if oferta_disciplina.disciplina.dependencia:
                 dependencia = Disciplina.objects.filter(
                     nome=oferta_disciplina.disciplina.dependencia.nome
@@ -131,6 +133,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                     )
                     return HttpResponseRedirect(self.failed_url)
 
+            # Validação de conflitos de agenda
             oferta_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             )
@@ -138,10 +141,13 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                 messages.error(request, "Há conflito de horários")
                 return HttpResponseRedirect(self.failed_url)
 
+            # Validação de capacidade da sala
             if (
                 oferta_disciplina.sala.capacidade
                 == oferta_disciplina.turma.aluno.count()
             ):
+                # Caso a capacidade da sala seja igual a quantidade de alunos na turma
+                # Adicionaremos a disciplina em disciplinas pendentes
                 disciplinas_pendentes.append(str(oferta_disciplina))
                 continue
 
