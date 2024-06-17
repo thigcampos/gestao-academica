@@ -22,7 +22,12 @@
             <li class="card_item-name">Horário: <span class="card_item-value">{{oferta_disciplina.horarioInicio}} até {{oferta_disciplina.horarioFim}}</span></li>
             <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
             <li class="card_item-name">Status: <span class="card_item-value">Inscrito</li>
-            <a href="">Cancelar Inscrição</a>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" value="{{ oferta_disciplina.disciplina.nome }}" name="disciplina-solicitada">
+                <button formaction="{% url 'aluno_disciplina_cancelar' %}">Cancelar Inscrição</button>
+            </form>
+            
         </ul>
     </div>
     {% endfor %}
@@ -34,7 +39,11 @@
         {% for item in request.session.lista_de_espera%}
         
         <li class="card_item-name"> {{item}} </li>
-        <a href="">Sair da lista de espera</a>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ item }}" name="disciplina-solicitada">
+            <button formaction="{% url 'aluno_disciplina_cancelar_lista' %}">Sair da lista de espera</button>
+        </form>
         
         {% endfor %}
     </div>

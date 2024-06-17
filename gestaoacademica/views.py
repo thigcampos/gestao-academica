@@ -87,6 +87,7 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         dia_horarios = []
         materias_com_pendencia = []
 
+
         # Check if more than 3 credits are selected
         if len(oferta_ids_list) > 3:
             messages.error(request, "Créditos excedidos, máximo 3")
@@ -96,11 +97,26 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         if Participacao.objects.filter(aluno=aluno).count() >= 3:
             messages.error(request, "Créditos excedidos, máximo 3")
             return HttpResponseRedirect(self.failed_url)
-
-        # Check for schedule conflicts and room capacity
         dia_horarios = []
+ 
+        # Check for schedule conflicts and room capacity
+        if Participacao.objects.filter(aluno=aluno).exists():
+            participacoes = Participacao.objects.filter(aluno=aluno)
+            for caso in participacoes:
+                dia_horarios .append(f"{caso.ofertaDisciplina.diaDaSemana}-{caso.ofertaDisciplina.horarioInicio}")
+        
         for oferta_id in oferta_ids_list:
+            
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
+            
+            if oferta_disciplina.disciplina.dependencia:
+                dependencia = Disciplina.objects.filter(nome = oferta_disciplina.disciplina.dependencia.nome)[0]
+                if dependencia not in aluno.disciplinas_concluidas.all():
+                    messages.error(request, f"A disciplina {oferta_disciplina.disciplina.nome} tem como pré-requisito {dependencia.nome} a qual voce não cursou")
+                    return HttpResponseRedirect(self.failed_url)
+                    
+                
+            
             oferta_dia_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             )
@@ -118,8 +134,6 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
 
             dia_horarios.append(oferta_dia_horario)
 
-        # Enroll the student in the selected courses
-        for oferta_id in oferta_ids_list:
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
             turma = Turma.objects.filter(pk=oferta_disciplina.turma.id).first()
             turma.aluno.add(aluno)
@@ -188,3 +202,35 @@ class AlunoDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView):
             if participacao.ofertaDisciplina not in ofertas_disciplina:
                 ofertas_disciplina.append(participacao.ofertaDisciplina)
         return ofertas_disciplina
+    
+    
+class AlunoDisciplinaCancelaInscricao(LoginRequiredMixin, CommonContextMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        nomeDaDiscilplina = request.POST.getlist("disciplina-solicitada")[0]
+        disciplina = Disciplina.objects.filter(nome=nomeDaDiscilplina)[0]
+        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
+        aluno = Aluno.objects.filter(user=self.request.user).first()
+        participacao = Participacao.objects.filter(ofertaDisciplina=ofertaDisciplina,aluno=aluno)[0]
+        participacao.delete()
+        messages.success(request, "Incrição cancelada com sucesso!")
+        return HttpResponseRedirect(reverse_lazy("aluno_disciplina_list"))
+
+class AlunoDisciplinaCancelaListaDeEspera(LoginRequiredMixin, CommonContextMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        print(request.session['lista_de_espera'])
+        nomeDaDiscilplinaCompleto = request.POST.getlist("disciplina-solicitada")[0]
+        print(nomeDaDiscilplinaCompleto)
+        nomeDaDiscilplina = nomeDaDiscilplinaCompleto.split(" (")[0]
+        print(nomeDaDiscilplina)
+        disciplina = Disciplina.objects.filter(nome=nomeDaDiscilplina)[0]
+        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
+        aluno = Aluno.objects.filter(user=self.request.user).first()
+        listaDeEspera = ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina,aluno=aluno)[0]
+        listaDeEspera.delete()
+        temp = request.session['lista_de_espera'][:]
+        print(temp)
+        print(nomeDaDiscilplinaCompleto)
+        temp.remove(nomeDaDiscilplinaCompleto)
+        request.session['lista_de_espera'] = temp
+        messages.success(request, "Incrição na lista de espera   cancelada com sucesso!")
+        return HttpResponseRedirect(reverse_lazy("aluno_disciplina_list"))

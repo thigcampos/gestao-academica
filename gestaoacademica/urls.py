@@ -27,7 +27,9 @@ from gestaoacademica.views import (
     AlunoDisciplinaListView,
     LoginPageView,
     SeInscreverEmoutraDisciplina,
-    EntrarNaListaDeEspera
+    EntrarNaListaDeEspera,
+    AlunoDisciplinaCancelaInscricao,
+    AlunoDisciplinaCancelaListaDeEspera
 )
 
 urlpatterns = [
@@ -60,5 +62,15 @@ urlpatterns = [
         "alunos/disciplinas",
         AlunoDisciplinaListView.as_view(),
         name="aluno_disciplina_list",
+    ),
+    path(
+        "alunos/disciplinas/cancelar",
+        AlunoDisciplinaCancelaInscricao.as_view(),
+        name="aluno_disciplina_cancelar",
+    ),
+    path(
+        "alunos/disciplinas/cancelarlista",
+        AlunoDisciplinaCancelaListaDeEspera.as_view(),
+        name="aluno_disciplina_cancelar_lista",
     ),
 ]

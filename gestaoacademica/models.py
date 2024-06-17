@@ -2,6 +2,16 @@ from django.db import models
 from django.conf import settings
 import datetime
 
+class Disciplina(models.Model):
+    nome = models.TextField(verbose_name="Nome da disciplina", default="")
+    dependencia = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    cargaHoraria = models.IntegerField(default=0)
+
+    def __str__(self) -> str:
+        return self.nome
+    
 
 class Aluno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -13,6 +23,7 @@ class Aluno(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
+    disciplinas_concluidas = models.ManyToManyField(Disciplina)
 
     objects = models.Manager()
 
@@ -48,15 +59,7 @@ class Sala(models.Model):
         return self.idSala
 
 
-class Disciplina(models.Model):
-    nome = models.TextField(verbose_name="Nome da disciplina", default="")
-    dependencia = models.ForeignKey(
-        "self", on_delete=models.SET_NULL, null=True, blank=True
-    )
-    cargaHoraria = models.IntegerField(default=0)
 
-    def __str__(self) -> str:
-        return self.nome
 
 
 class OfertaDisciplina(models.Model):
@@ -74,8 +77,8 @@ class OfertaDisciplina(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, null=True)
     diaDaSemana = models.TextField(choices=DIAS_DA_SEMANA, default="DOMINGO")
     sala = models.ForeignKey(Sala, null=True, on_delete=models.SET_NULL)
-    horarioInicio = models.TimeField(default=datetime.datetime.now().time())
-    horarioFim = models.TimeField(default=datetime.datetime.now().time())
+    horarioInicio = models.TimeField(default=datetime.time(20, 21, 43, 77942))
+    horarioFim = models.TimeField(default=datetime.time(20, 21, 43, 77942))
 
     def __str__(self) -> str:
         return f"{self.disciplina.nome} ({self.professor.nome}) {self.diaDaSemana} {self.horarioInicio} - {self.horarioFim}"
