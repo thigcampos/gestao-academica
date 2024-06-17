@@ -89,3 +89,32 @@ turmaSip.nome = f"{sip.disciplina.nome} ({sip.professor.nome}) {sip.diaDaSemana}
 turmaSip.save()
 sip.turma = Turma.objects.all().filter(nome=turmaSip.nome)[0]
 sip.save()
+
+
+bdI = OfertaDisciplina()
+bdI.professor = Professor.objects.all().filter(nome="André")[0]
+bdI.disciplina = Disciplina.objects.all().filter(nome="Banco de Dados I")[0]
+bdI.diaDaSemana = "SEXTA"
+bdI.sala = Sala.objects.all().filter(idSala="A405")[0]
+bdI.horarioInicio = datetime.time(hour=19, minute=0, second=0)
+bdI.horarioFim = datetime.time(hour=20, minute=40, second=0)
+
+turmaBdI = Turma()
+turmaBdI.nome = f"{bdI.disciplina.nome} ({bdI.professor.nome}) {bdI.diaDaSemana} {bdI.horarioInicio} - {bdI.horarioFim}"
+turmaBdI.save()
+bdI.turma = Turma.objects.all().filter(nome=turmaBdI.nome)[0]
+bdI.save()
+
+lpI = OfertaDisciplina()
+lpI.professor = Professor.objects.all().filter(nome="Flávio")[0]
+lpI.disciplina = Disciplina.objects.all().filter(nome="Lógica de Programação I")[0]
+lpI.diaDaSemana = "SEXTA"
+lpI.sala = Sala.objects.all().filter(idSala="B406")[0]
+lpI.horarioInicio = datetime.time(hour=19, minute=0, second=0)
+lpI.horarioFim = datetime.time(hour=22, minute=30, second=0)
+
+turmaLpI = Turma()
+turmaLpI.nome = f"{lpI.disciplina.nome} ({lpI.professor.nome}) {lpI.diaDaSemana} {lpI.horarioInicio} - {lpI.horarioFim}"
+turmaLpI.save()
+lpI.turma = Turma.objects.all().filter(nome=turmaLpI.nome)[0]
+lpI.save()
