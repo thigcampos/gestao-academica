@@ -61,6 +61,19 @@ turmaQua.save()
 qua.turma = Turma.objects.all().filter(nome=turmaQua.nome)[0]
 qua.save()
 
+swI = OfertaDisciplina()
+swI.professor = Professor.objects.all().filter(nome="Flávio")[0]
+swI.disciplina = Disciplina.objects.all().filter(nome="Sistemas Web I")[0]
+swI.diaDaSemana = "QUARTA"
+swI.sala = Sala.objects.all().filter(idSala="A405")[0]
+swI.horarioInicio = datetime.time(hour=19, minute=0, second=0)
+swI.horarioFim = datetime.time(hour=22, minute=30, second=0)
+
+turmaSwI = Turma()
+turmaSwI.nome = f"{swI.disciplina.nome} ({swI.professor.nome}) {swI.diaDaSemana} {swI.horarioInicio} - {swI.horarioFim}"
+turmaSwI.save()
+swI.turma = Turma.objects.all().filter(nome=turmaSwI.nome)[0]
+swI.save()
 
 gpr = OfertaDisciplina()
 gpr.professor = Professor.objects.all().filter(nome="André")[0]
@@ -97,7 +110,7 @@ bdI.disciplina = Disciplina.objects.all().filter(nome="Banco de Dados I")[0]
 bdI.diaDaSemana = "SEXTA"
 bdI.sala = Sala.objects.all().filter(idSala="A405")[0]
 bdI.horarioInicio = datetime.time(hour=19, minute=0, second=0)
-bdI.horarioFim = datetime.time(hour=20, minute=40, second=0)
+bdI.horarioFim = datetime.time(hour=22, minute=30, second=0)
 
 turmaBdI = Turma()
 turmaBdI.nome = f"{bdI.disciplina.nome} ({bdI.professor.nome}) {bdI.diaDaSemana} {bdI.horarioInicio} - {bdI.horarioFim}"

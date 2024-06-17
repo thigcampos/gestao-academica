@@ -69,7 +69,7 @@ class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView)
         context["diciplinasInscritas"] = [
             disciplina.ofertaDisciplina for disciplina in diciplinasInscritas
         ]
-        context["len_diciplinasInscritas"] = len(context["diciplinasInscritas"])
+        context["len_diciplinasInscritas"] = len(context["diciplinasInscritas"])*5
         return context
 
 
@@ -87,15 +87,9 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         dia_horarios = []
         materias_com_pendencia = []
 
-
-        # Check if more than 3 credits are selected
-        if len(oferta_ids_list) > 3:
-            messages.error(request, "Créditos excedidos, máximo 3")
-            return HttpResponseRedirect(self.failed_url)
-
         # Check if the student already has 3 or more registrations
-        if Participacao.objects.filter(aluno=aluno).count() >= 3:
-            messages.error(request, "Créditos excedidos, máximo 3")
+        if Participacao.objects.filter(aluno=aluno).count()*5 + len(oferta_ids_list)*5 >= 20:
+            messages.error(request, "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)")
             return HttpResponseRedirect(self.failed_url)
         dia_horarios = []
  
