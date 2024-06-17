@@ -222,10 +222,11 @@ class TestParticipacaoCreateView(TestCase):
 
     def test_room_capacity_error(self):
         # Teste para verificar erro ao exceder a capacidade da sala
-        # Criaremos uma sala com capacidade sendo 1 e para preenche-lá, criamos o "other_aluno"
+        # Criação de uma Sala com capacidade sendo 1 e para preenche-lá, há a criação do "other_aluno"
         other_aluno = make(Aluno, prontuario="BP300")
         turma = make(Turma, aluno=[])
         turma.aluno.add(self.aluno)
+        # Criação de uma instância dos outro modelos que compõem OfertaDisciplina
         professor = make(Professor)
         disciplina = make(Disciplina)
         sala = make(Sala, capacidade=1)
@@ -236,30 +237,30 @@ class TestParticipacaoCreateView(TestCase):
             professor=professor,
             sala=sala,
         )
-        # Fazemos o login com a conta do aluno de teste
+        # Login com a conta do aluno de teste
         self.client.login(email="testuser@mail.com", password="secret")
         oferta_ids = [oferta_disciplina.pk]
-        # Realizamos a requisição
+        # Realização da requisição
         response = self.client.post(
             reverse("participacao_create"), {"oferta-disciplina": oferta_ids}
         )
-        # Validamos se o usuário foi redirecionado
+        # Validação do redirecionamento do usuário para outra URL
         assert response.status_code == 302
-        # Validamos se o usuário está na lista de andamentos, como o esperado
+        # Validação da URL atual do usuário, sendo esperado que esteja em /disciplinas/
         assert response.url == reverse("oferta_disciplina_list")
-        # Validamos se o usuário foi notificado que há inscrição falhou e que há disciplinas pendentes
+        # Validação de notificação ao usuário de disciplinas pendentes
         assert self.client.session["disciplinas_pendentes"] == [str(oferta_disciplina)]
         # No topo da listagem de ofertas de disciplina, o usuário é apresentado com duas opções, entrar na lista de espera ou inscrever-se em outra disciplina
         # Neste presente teste, optaremos pela segunda opção, por já existir um teste para a criação da lista de espera
-        response_discard_disciplina = self.client.post(
+        self.client.post(
             reverse("other_participacao_create"),
             {"disciplina-pendente": str(oferta_disciplina)},
         )
-        # Validamos se o usuário foi redirecionado
+        # Validação do redirecionamento do usuário para outra URL
         assert response.status_code == 302
-        # Validamos se o usuário está na lista de andamentos, como o esperado
+        # Validação da URL atual do usuário, sendo esperado que esteja em /disciplinas/
         assert response.url == reverse("oferta_disciplina_list")
-        # Validamos se a lista de disciplinas pendentes de uma resolução está vazia
+        # Validação da lista de disciplinas pendentes, espera-se que esteja vazia
         assert self.client.session["disciplinas_pendentes"] == []
 
 
