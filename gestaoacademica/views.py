@@ -94,11 +94,20 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
         disciplinas_pendentes = []
 
         if len(oferta_ids) > 4:
-            messages.error(request, "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)")
+            messages.error(
+                request,
+                "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)",
+            )
             return HttpResponseRedirect(self.failed_url)
 
-        if Participacao.objects.filter(aluno=aluno).count()*5 + len(oferta_ids)*5 >= 20:
-            messages.error(request, "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)")
+        if (
+            Participacao.objects.filter(aluno=aluno).count() * 5 + len(oferta_ids) * 5
+            >= 20
+        ):
+            messages.error(
+                request,
+                "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)",
+            )
             return HttpResponseRedirect(self.failed_url)
 
         if Participacao.objects.filter(aluno=aluno).exists():
