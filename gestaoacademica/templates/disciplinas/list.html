@@ -10,15 +10,15 @@
     {% endfor %}
 </ul>
 {% endif %}
-{% if request.session.test %}
+{% if request.session.disciplinas_pendentes %}
     <h3>Algumas matérias que você escolheu estão cheias:</h3>
-    {% for disciplina_pendente in  request.session.test %}
+    {% for disciplina_pendente in  request.session.disciplinas_pendentes %}
     <form method="post">
         {% csrf_token %}
         <p>{{disciplina_pendente}}</p>
         <input type="hidden" value="{{disciplina_pendente}}" name="disciplina-pendente">
-        <button formaction="{% url 'entrar_na_lista_de_espera' %}">Entrar na Lista de Espera</button>
-        <button formaction="{% url 'se_inscrever_em_outra_materia' %}" >Se inscrever em outra disciplina</button>
+        <button class="button" formaction="{% url 'lista_espera_create' %}">Entrar na Lista de Espera</button>
+        <button class="button" formaction="{% url 'other_participacao_create' %}" >Se inscrever em outra disciplina</button>
     </form>
 
     {% endfor %}
@@ -28,18 +28,16 @@
    {% csrf_token %}
     {% for oferta_disciplina in object_list %}
     <div class="card">
-        
         <header>
-
-            {% if oferta_disciplina in  diciplinasInscritas %}
-                <p>Já inscrito</p>
-            {% else %}
+            {% if oferta_disciplina not in disciplinas_inscritas %}
                 <input id="oferta-disciplina={{oferta_disciplina.id}}" type="checkbox" name="oferta-disciplina" value="{{ oferta_disciplina.id }}"/>
             {% endif %}
-            
             <label for="oferta-disciplina={{oferta_disciplina.id}}">{{ oferta_disciplina.disciplina.nome }}</label>
         </header>
         <ul class="card_list">
+            {% if oferta_disciplina in disciplinas_inscritas %}
+            <li class="card_item-name">Já Inscrito</li>
+            {% endif %}
             <li class="card_item-name">Professor: <span class="card_item-value">{{oferta_disciplina.professor.nome|lower}} {{oferta_disciplina.professor.sobrenome}}</span></li>
             <li class="card_item-name">Sala: <span class="card_item-value">{{oferta_disciplina.sala.idSala}}</span></li>
             <li class="card_item-name">Dia de aula: <span class="card_item-value">{{oferta_disciplina.diaDaSemana|lower}}</li>
@@ -50,31 +48,22 @@
     {% endfor %}
     <button type="submit" class="button">Salvar</button>
 </form>
-{% if diciplinasInscritas %}
-    <div class="div-diciplinas-info">
-        <h3>Créditos de inscrições utilizados {{len_diciplinasInscritas}} de 20 | <a href="/alunos/disciplinas">ir para minhas inscrições</a></h3> 
-        <div class="diciplinas-info">
-            
-            {% for disciplina in diciplinasInscritas %}
-            <div>
-                <p>{{disciplina.disciplina.nome}} ({{disciplina.professor.nome}} {{disciplina.professor.sobrenome}}) : {{disciplina.diaDaSemana}} {{disciplina.horarioInicio}} - {{disciplina.horarioFim}}  STATUS: Inscrito</p> 
-            </div>
-    
+{% if disciplinas_inscritas %}
+    <div class="disciplinas_info">
+        <h3>Incrições Realizadas</h3> 
+        <ul class="messages">
+            {% for disciplina in disciplinas_inscritas %}
+            <li>{{disciplina.disciplina.nome}} ({{disciplina.professor.nome}} {{disciplina.professor.sobrenome}})</li> 
             {% endfor %}
-        </div>
-        
+        </ul>
         {% if request.session.lista_de_espera %}
-        <div class="diciplinas-info">
-            <h3>Lista de Espera</h3>
-            
+        <h3>Lista de Espera</h3>    
+        <ul class="messages">
             {% for item in request.session.lista_de_espera%}
-            <div>
-                <p>{{item}}  STATUS: Na lista de espera</p> 
-            </div>
+            <li>{{item}}</li> 
             {% endfor %}
-        </div>
+        </ul>
         {% endif %}
-
     </div>
 {% endif  %}
 {% endblock %}

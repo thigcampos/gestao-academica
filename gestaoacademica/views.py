@@ -7,7 +7,14 @@ from django.contrib.auth import views as auth_views
 
 from authenticator.forms import UserCreationForm
 from authenticator.models import User
-from gestaoacademica.models import Aluno, OfertaDisciplina, Participacao, Turma, Disciplina, ListaDeEspera
+from gestaoacademica.models import (
+    Aluno,
+    OfertaDisciplina,
+    Participacao,
+    Turma,
+    Disciplina,
+    ListaDeEspera,
+)
 from gestaoacademica.forms import AlunoForm
 
 from django.views.generic.base import ContextMixin
@@ -39,18 +46,18 @@ class AlunoCreateView(CommonContextMixin, CreateView):
     success_url = reverse_lazy("home_page")
 
     def post(self, request, *args, **kwargs):
-        user_email = request.POST.get("email")
-        user_password = request.POST.get("password1")
-        user = User.objects.create_user(user_email, user_password)
+        email = request.POST.get("email")
+        password = request.POST.get("password1")
+        user = User.objects.create_user(email, password)
 
-        aluno_nome = request.POST.get("nome")
-        aluno_sobrenome = request.POST.get("sobrenome")
-        aluno_prontuario = request.POST.get("prontuario")
+        first_name = request.POST.get("nome")
+        last_name = request.POST.get("sobrenome")
+        registration_number = request.POST.get("prontuario")
         Aluno.objects.create(
             user=user,
-            nome=aluno_nome,
-            sobrenome=aluno_sobrenome,
-            prontuario=aluno_prontuario,
+            nome=first_name,
+            sobrenome=last_name,
+            prontuario=registration_number,
         )
         return HttpResponseRedirect(self.success_url)
 
@@ -64,58 +71,61 @@ class OfertaDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         aluno = Aluno.objects.filter(user=self.request.user).first()
-        diciplinasInscritas = Participacao.objects.filter(aluno=aluno)
+        disciplinas_inscritas = Participacao.objects.filter(aluno=aluno)
         context["aluno"] = aluno
-        context["diciplinasInscritas"] = [
-            disciplina.ofertaDisciplina for disciplina in diciplinasInscritas
+        context["disciplinas_inscritas"] = [
+            participacao.ofertaDisciplina for participacao in disciplinas_inscritas
         ]
-        context["len_diciplinasInscritas"] = len(context["diciplinasInscritas"])*5
         return context
 
 
 class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView):
     login_url = "/accounts/login"
     model = Participacao
-    fields = ["aluno", "ofertaDisciplina"]
+    fields = ["aluno", "oferta_disciplina"]
     template_name = "disciplinas/list.html"
     success_url = reverse_lazy("home_page")
     failed_url = reverse_lazy("oferta_disciplina_list")
 
     def post(self, request, *args, **kwargs):
-        oferta_ids_list = request.POST.getlist("oferta-disciplina")
+        oferta_ids = request.POST.getlist("oferta-disciplina")
         aluno = Aluno.objects.filter(user=self.request.user).first()
-        dia_horarios = []
-        materias_com_pendencia = []
+        conflito_agenda = []
+        disciplinas_pendentes = []
 
-        # Check if the student already has 3 or more registrations
-        if Participacao.objects.filter(aluno=aluno).count()*5 + len(oferta_ids_list)*5 >= 20:
+        if len(oferta_ids) > 4:
             messages.error(request, "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)")
             return HttpResponseRedirect(self.failed_url)
-        dia_horarios = []
- 
-        # Check for schedule conflicts and room capacity
+
+        if Participacao.objects.filter(aluno=aluno).count()*5 + len(oferta_ids)*5 >= 20:
+            messages.error(request, "Créditos excedidos, máximo 20 (cada inscrição vale 5 créditos)")
+            return HttpResponseRedirect(self.failed_url)
+
         if Participacao.objects.filter(aluno=aluno).exists():
             participacoes = Participacao.objects.filter(aluno=aluno)
-            for caso in participacoes:
-                dia_horarios .append(f"{caso.ofertaDisciplina.diaDaSemana}-{caso.ofertaDisciplina.horarioInicio}")
-        
-        for oferta_id in oferta_ids_list:
-            
+            for participacao in participacoes:
+                conflito_agenda.append(
+                    f"{participacao.ofertaDisciplina.diaDaSemana}-{participacao.ofertaDisciplina.horarioInicio}"
+                )
+
+        for oferta_id in oferta_ids:
             oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
-            
+
             if oferta_disciplina.disciplina.dependencia:
-                dependencia = Disciplina.objects.filter(nome = oferta_disciplina.disciplina.dependencia.nome)[0]
+                dependencia = Disciplina.objects.filter(
+                    nome=oferta_disciplina.disciplina.dependencia.nome
+                ).first()
                 if dependencia not in aluno.disciplinas_concluidas.all():
-                    messages.error(request, f"A disciplina {oferta_disciplina.disciplina.nome} tem como pré-requisito {dependencia.nome} a qual voce não cursou")
+                    messages.error(
+                        request,
+                        f"A disciplina {oferta_disciplina.disciplina.nome} tem como pré-requisito {dependencia.nome}, a qual você não cursou",
+                    )
                     return HttpResponseRedirect(self.failed_url)
-                    
-                
-            
-            oferta_dia_horario = (
+
+            oferta_horario = (
                 f"{oferta_disciplina.diaDaSemana}-{oferta_disciplina.horarioInicio}"
             )
-
-            if oferta_dia_horario in dia_horarios:
+            if oferta_horario in conflito_agenda:
                 messages.error(request, "Há conflito de horários")
                 return HttpResponseRedirect(self.failed_url)
 
@@ -123,108 +133,108 @@ class ParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, CreateView)
                 oferta_disciplina.sala.capacidade
                 == oferta_disciplina.turma.aluno.count()
             ):
-                materias_com_pendencia.append(f"{str(oferta_disciplina)}")
+                disciplinas_pendentes.append(str(oferta_disciplina))
                 continue
 
-            dia_horarios.append(oferta_dia_horario)
-
-            oferta_disciplina = OfertaDisciplina.objects.filter(pk=oferta_id).first()
+            conflito_agenda.append(oferta_horario)
             turma = Turma.objects.filter(pk=oferta_disciplina.turma.id).first()
             turma.aluno.add(aluno)
             turma.save()
 
-            participacao = Participacao(aluno=aluno, ofertaDisciplina=oferta_disciplina)
-            participacao.save()
-            
-        if len(materias_com_pendencia) >0:
-            request.session['test'] = materias_com_pendencia
+            Participacao.objects.create(aluno=aluno, ofertaDisciplina=oferta_disciplina)
+
+        if disciplinas_pendentes:
+            request.session["disciplinas_pendentes"] = disciplinas_pendentes
             return HttpResponseRedirect(self.failed_url)
-            
+
         messages.success(request, "Inscrição feita com sucesso")
         return HttpResponseRedirect(self.success_url)
 
-class SeInscreverEmoutraDisciplina(LoginRequiredMixin, CommonContextMixin, ListView):
+
+class OtherParticipacaoCreateView(LoginRequiredMixin, CommonContextMixin, ListView):
     def post(self, request, *args, **kwargs):
-        oferta_ids_list = request.POST.getlist("disciplina-pendente")[0]
-        temp = request.session['test'][:]
-        temp.remove(oferta_ids_list)
-        request.session['test'] = temp
+        disciplina_pendente = request.POST.getlist("disciplina-pendente")[0]
+        temp = request.session["disciplinas_pendentes"][:]
+        temp.remove(disciplina_pendente)
+        request.session["disciplinas_pendentes"] = temp
         return HttpResponseRedirect(reverse_lazy("oferta_disciplina_list"))
-    
-class EntrarNaListaDeEspera(LoginRequiredMixin, CommonContextMixin, ListView):
+
+
+class ListaDeEsperaCreateView(LoginRequiredMixin, CommonContextMixin, ListView):
     def post(self, request, *args, **kwargs):
-        oferta_ids_list = request.POST.getlist("disciplina-pendente")[0]
-        temp = request.session['test'][:]
-        temp.remove(oferta_ids_list)
-        request.session['test'] = temp
-        namedisciplina = oferta_ids_list.split(" (")[0]
-        print(namedisciplina)
-        disciplina = Disciplina.objects.filter(nome=namedisciplina)[0]
-        print(disciplina)
-        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
-        aluno = Aluno.objects.filter(user=self.request.user).first()
-        if ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina).exists():
-            listaDeEspera =  ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina)[0]
-            listaDeEspera.aluno.add(aluno)
+        disciplina_pendente = request.POST.getlist("disciplina-pendente")[0]
+        temp = request.session["disciplinas_pendentes"][:]
+        temp.remove(disciplina_pendente)
+        request.session["disciplinas_pendentes"] = temp
+
+        nome_disciplina = disciplina_pendente.split(" (")[0]
+        disciplina = Disciplina.objects.filter(nome=nome_disciplina).first()
+        oferta_disciplina = OfertaDisciplina.objects.filter(
+            disciplina=disciplina
+        ).first()
+        aluno = Aluno.objects.filter(user=request.user).first()
+
+        lista_de_espera, created = ListaDeEspera.objects.get_or_create(
+            ofertaDisciplina=oferta_disciplina
+        )
+        lista_de_espera.aluno.add(aluno)
+
+        if "lista_de_espera" in request.session:
+            request.session["lista_de_espera"].append(str(oferta_disciplina))
         else:
-            listaDeEspera = ListaDeEspera(ofertaDisciplina=ofertaDisciplina)
-            listaDeEspera.save()
-            listaDeEspera.aluno.add(aluno)
-        
-        if 'lista_de_espera' in request.session:
-            request.session['lista_de_espera'].append(str(ofertaDisciplina))
-        else:
-            request.session['lista_de_espera'] = [str(ofertaDisciplina)]
-        
-        
+            request.session["lista_de_espera"] = [str(oferta_disciplina)]
+
         messages.success(request, "Aluno inserido na lista de espera!")
         return HttpResponseRedirect(reverse_lazy("oferta_disciplina_list"))
-    
+
 
 class AlunoDisciplinaListView(LoginRequiredMixin, CommonContextMixin, ListView):
     login_url = "/accounts/login"
     model = OfertaDisciplina
     template_name = "alunos/list.html"
-    queryset = Participacao.objects.filter()
+    queryset = Participacao.objects.all()
 
     def get_queryset(self):
-        user = self.request.user
-        aluno = Aluno.objects.filter(user=user).first()
-        participacoes = Participacao.objects.filter(aluno=aluno)
-        ofertas_disciplina = []
-        for participacao in participacoes:
-            if participacao.ofertaDisciplina not in ofertas_disciplina:
-                ofertas_disciplina.append(participacao.ofertaDisciplina)
-        return ofertas_disciplina
-    
-    
-class AlunoDisciplinaCancelaInscricao(LoginRequiredMixin, CommonContextMixin, ListView):
-    def post(self, request, *args, **kwargs):
-        nomeDaDiscilplina = request.POST.getlist("disciplina-solicitada")[0]
-        disciplina = Disciplina.objects.filter(nome=nomeDaDiscilplina)[0]
-        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
         aluno = Aluno.objects.filter(user=self.request.user).first()
-        participacao = Participacao.objects.filter(ofertaDisciplina=ofertaDisciplina,aluno=aluno)[0]
+        participacoes = Participacao.objects.filter(aluno=aluno)
+        return [participacao.ofertaDisciplina for participacao in participacoes]
+
+
+class ParticipacaoDeleteView(LoginRequiredMixin, CommonContextMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        nome_disciplina = request.POST.getlist("disciplina-solicitada")[0]
+        disciplina = Disciplina.objects.filter(nome=nome_disciplina).first()
+
+        oferta_disciplina = OfertaDisciplina.objects.filter(
+            disciplina=disciplina
+        ).first()
+        aluno = Aluno.objects.filter(user=request.user).first()
+
+        participacao = Participacao.objects.filter(
+            ofertaDisciplina=oferta_disciplina, aluno=aluno
+        ).first()
         participacao.delete()
-        messages.success(request, "Incrição cancelada com sucesso!")
+        messages.success(request, "Inscrição cancelada com sucesso!")
         return HttpResponseRedirect(reverse_lazy("aluno_disciplina_list"))
 
-class AlunoDisciplinaCancelaListaDeEspera(LoginRequiredMixin, CommonContextMixin, ListView):
+
+class ListaDeEsperaDeleteView(LoginRequiredMixin, CommonContextMixin, ListView):
     def post(self, request, *args, **kwargs):
-        print(request.session['lista_de_espera'])
-        nomeDaDiscilplinaCompleto = request.POST.getlist("disciplina-solicitada")[0]
-        print(nomeDaDiscilplinaCompleto)
-        nomeDaDiscilplina = nomeDaDiscilplinaCompleto.split(" (")[0]
-        print(nomeDaDiscilplina)
-        disciplina = Disciplina.objects.filter(nome=nomeDaDiscilplina)[0]
-        ofertaDisciplina = OfertaDisciplina.objects.filter(disciplina=disciplina)[0]
-        aluno = Aluno.objects.filter(user=self.request.user).first()
-        listaDeEspera = ListaDeEspera.objects.filter(ofertaDisciplina=ofertaDisciplina,aluno=aluno)[0]
-        listaDeEspera.delete()
-        temp = request.session['lista_de_espera'][:]
-        print(temp)
-        print(nomeDaDiscilplinaCompleto)
-        temp.remove(nomeDaDiscilplinaCompleto)
-        request.session['lista_de_espera'] = temp
-        messages.success(request, "Incrição na lista de espera   cancelada com sucesso!")
+        disciplina_solicitada = request.POST.getlist("disciplina-solicitada")[0]
+        nome_disciplina = disciplina_solicitada.split(" (")[0]
+
+        disciplina = Disciplina.objects.filter(nome=nome_disciplina).first()
+        oferta_disciplina = OfertaDisciplina.objects.filter(
+            disciplina=disciplina
+        ).first()
+        aluno = Aluno.objects.filter(user=request.user).first()
+
+        lista_de_espera = ListaDeEspera.objects.filter(
+            ofertaDisciplina=oferta_disciplina, aluno=aluno
+        ).first()
+        lista_de_espera.delete()
+        temp = request.session["lista_de_espera"][:]
+        temp.remove(disciplina_solicitada)
+        request.session["lista_de_espera"] = temp
+        messages.success(request, "Inscrição na lista de espera cancelada com sucesso!")
         return HttpResponseRedirect(reverse_lazy("aluno_disciplina_list"))

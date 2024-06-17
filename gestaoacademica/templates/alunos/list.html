@@ -25,7 +25,7 @@
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" value="{{ oferta_disciplina.disciplina.nome }}" name="disciplina-solicitada">
-                <button formaction="{% url 'aluno_disciplina_cancelar' %}">Cancelar Inscrição</button>
+                <button class="button" formaction="{% url 'participacao_delete' %}">Cancelar Inscrição</button>
             </form>
             
         </ul>
@@ -37,14 +37,12 @@
             <h2>Disciplinas na lista de espera:</h2>
         </header>
         {% for item in request.session.lista_de_espera%}
-        
-        <li class="card_item-name"> {{item}} </li>
+        <li class="card_item-name">{{item}}</li>
         <form method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ item }}" name="disciplina-solicitada">
-            <button formaction="{% url 'aluno_disciplina_cancelar_lista' %}">Sair da lista de espera</button>
+            <button formaction="{% url 'lista_espera_delete' %}">Sair da lista de espera</button>
         </form>
-        
         {% endfor %}
     </div>
     {% endif %}

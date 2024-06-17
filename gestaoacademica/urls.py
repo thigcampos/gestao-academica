@@ -20,16 +20,16 @@ from django.urls import path
 
 from authenticator.views import LogoutView
 from gestaoacademica.views import (
+    LoginPageView,
     HomePageView,
     OfertaDisciplinaListView,
-    ParticipacaoCreateView,
     AlunoCreateView,
     AlunoDisciplinaListView,
-    LoginPageView,
-    SeInscreverEmoutraDisciplina,
-    EntrarNaListaDeEspera,
-    AlunoDisciplinaCancelaInscricao,
-    AlunoDisciplinaCancelaListaDeEspera
+    ParticipacaoCreateView,
+    OtherParticipacaoCreateView,
+    ParticipacaoDeleteView,
+    ListaDeEsperaCreateView,
+    ListaDeEsperaDeleteView,
 )
 
 urlpatterns = [
@@ -38,6 +38,11 @@ urlpatterns = [
     path("accounts/logout/", LogoutView.as_view(), name="accounts_logout"),
     path("accounts/register/aluno/", AlunoCreateView.as_view(), name="alunos_create"),
     path("", HomePageView.as_view(), name="home_page"),
+    path(
+        "alunos/disciplinas",
+        AlunoDisciplinaListView.as_view(),
+        name="aluno_disciplina_list",
+    ),
     path(
         "disciplinas/",
         OfertaDisciplinaListView.as_view(),
@@ -49,28 +54,23 @@ urlpatterns = [
         name="participacao_create",
     ),
     path(
-        "disciplinas/outra",
-        SeInscreverEmoutraDisciplina.as_view(),
-        name="se_inscrever_em_outra_materia",
+        "participacao/create/another",
+        OtherParticipacaoCreateView.as_view(),
+        name="other_participacao_create",
     ),
     path(
-        "disciplinas/listadeespera",
-        EntrarNaListaDeEspera.as_view(),
-        name="entrar_na_lista_de_espera",
+        "participacao/delete",
+        ParticipacaoDeleteView.as_view(),
+        name="participacao_delete",
     ),
     path(
-        "alunos/disciplinas",
-        AlunoDisciplinaListView.as_view(),
-        name="aluno_disciplina_list",
+        "lista-espera/create",
+        ListaDeEsperaCreateView.as_view(),
+        name="lista_espera_create",
     ),
     path(
-        "alunos/disciplinas/cancelar",
-        AlunoDisciplinaCancelaInscricao.as_view(),
-        name="aluno_disciplina_cancelar",
-    ),
-    path(
-        "alunos/disciplinas/cancelarlista",
-        AlunoDisciplinaCancelaListaDeEspera.as_view(),
-        name="aluno_disciplina_cancelar_lista",
+        "lista-espera/delete",
+        ListaDeEsperaDeleteView.as_view(),
+        name="lista_espera_delete",
     ),
 ]
