@@ -40,7 +40,7 @@ if len(Disciplina.objects.all().filter(nome="Sistemas Operacionais")) == 0:
     sip.nome = "Sistemas Operacionais"
     sip.cargaHoraria = 80
     sip.save()
-    
+
 if len(Disciplina.objects.all().filter(nome="Banco de Dados I")) == 0:
     bdI = Disciplina()
     bdI.nome = "Banco de Dados I"
@@ -52,7 +52,7 @@ if len(Disciplina.objects.all().filter(nome="Lógica de Programação I")) == 0:
     lpI.nome = "Lógica de Programação I"
     lpI.cargaHoraria = 80
     lpI.save()
-    
+
 if len(Disciplina.objects.all().filter(nome="Sistemas Web I")) == 0:
     lpI = Disciplina()
     lpI.nome = "Sistemas Web I"

@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 import datetime
 
+
 class Disciplina(models.Model):
     nome = models.TextField(verbose_name="Nome da disciplina", default="")
     dependencia = models.ForeignKey(
@@ -11,7 +12,7 @@ class Disciplina(models.Model):
 
     def __str__(self) -> str:
         return self.nome
-    
+
 
 class Aluno(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -57,9 +58,6 @@ class Sala(models.Model):
 
     def __str__(self) -> str:
         return self.idSala
-
-
-
 
 
 class OfertaDisciplina(models.Model):
