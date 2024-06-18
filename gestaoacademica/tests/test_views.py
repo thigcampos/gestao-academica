@@ -225,7 +225,7 @@ class TestParticipacaoCreateView(TestCase):
         # Criação de uma Sala com capacidade sendo 1 e para preenche-lá, há a criação do "other_aluno"
         other_aluno = make(Aluno, prontuario="BP300")
         turma = make(Turma, aluno=[])
-        turma.aluno.add(self.aluno)
+        turma.aluno.add(other_aluno)
         # Criação de uma instância dos outro modelos que compõem OfertaDisciplina
         professor = make(Professor)
         disciplina = make(Disciplina)
