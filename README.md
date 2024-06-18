@@ -1,6 +1,11 @@
 # Sistema de Gestão Acadêmica
 
 ## Shortcuts
+As part of a continuous integration strategy between our team, we implement a three-stage GitHub Action that validates: code format, using black formatter, errors and code style (e.g. unassigned variables), using flake8, and unit tests, using pytest. The following badge is a simbol that easily identifies if our code passed through all three validations or not.
+
+[![Django CI](https://github.com/thigcampos/gestao-academica/actions/workflows/django.yml/badge.svg)](https://github.com/thigcampos/gestao-academica/actions/workflows/django.yml)
+
+Important links
 - [Access RN01 tests](https://github.com/thigcampos/gestao-academica/blob/837a970028bac04d98bb00752e189d34e2f321b7/gestaoacademica/tests/test_views.py#L105)
 - [Access RN02 test](https://github.com/thigcampos/gestao-academica/blob/837a970028bac04d98bb00752e189d34e2f321b7/gestaoacademica/tests/test_views.py#L223)
 - [Access coverage report](https://github.com/thigcampos/gestao-academica/blob/main/report.txt)
